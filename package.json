@@ -1,0 +1,30 @@
+{
+  "description": "This package.json file is only used for installing npm dependencies. But this is not an installable node package, but a WireCloud widget. Take a look into src/config.xml for more details about this widget",
+  "devDependencies": {
+    "grunt": "^1.0.4",
+    "grunt-contrib-clean": "~1.1.0",
+    "grunt-contrib-compress": "^1.6.0",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-coveralls": "^2.0.0",
+    "grunt-curl": "^2.5.1",
+    "grunt-karma": "^3.0.1",
+    "grunt-strip-code": "^1.0.6",
+    "grunt-text-replace": "~0.4.0",
+    "grunt-wirecloud": "^0.9.6",
+    "gruntify-eslint": "^5.0.0",
+    "jasmine-core": "^2.99.1",
+    "karma": "^4.0.0",
+    "karma-chrome-launcher": "^1.0.1",
+    "karma-coverage": "^2.0.1",
+    "karma-firefox-launcher": "^1.0.0",
+    "karma-jasmine": "^1.1.2",
+    "karma-junit-reporter": "^1.2.0",
+    "maplibre-gl": "^1.14.0",
+    "mock-applicationmashup": "^1.0.0-e",
+    "wirecloud-config-parser": "^0.2.3"
+  },
+  "private": true,
+  "dependencies": {
+    "three": "^0.116.0"
+  }
+}

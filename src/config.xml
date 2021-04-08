@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<widget xmlns="http://wirecloud.conwet.fi.upm.es/ns/macdescription/1" vendor="FISUDA" name="maplibregl" version="0.1.0">
+
+    <details>
+        <title>__MSG_displayName__</title>
+        <homepage>https://github.com/lets-fiware/maplibre-gl-widget</homepage>
+        <authors>Kazuhito Suda</authors>
+        <email>wireclod@letsfiware.jp</email>
+        <image></image>
+        <smartphoneimage></smartphoneimage>
+        <description>__MSG_description__</description>
+        <longdescription>DESCRIPTION.md</longdescription>
+        <changelog>doc/changelog.md</changelog>
+        <doc>doc/userguide.md</doc>
+        <license>BSD-3-Clause License</license>
+        <issuetracker>https://github.com/lets-fiware/maplibre-gl-widget/issues</issuetracker>
+    </details>
+
+    <requirements>
+        <feature name="DashboardManagement"/>
+        <feature name="StyledElements"/>
+    </requirements>
+
+    <preferences>
+        <preference name="initialCenter" type="text" label="Initial Location" description="Decimal coordinates where map will be centered on load (e.g. `52, 5`). Leave this setting empty if you don't want to center the map at init. Remember to change the initial zoom level if you provide an initial location." default="135,35" />
+        <preference name="initialZoom" type="text" label="Initial Zoom Level" description="Initial zoom level. From 1 to 22, where '1' represents the furthest level and '22' the maximum zoom level." default="3" />
+        <preference name="initialPitch" type="text" label="Initial Pitch" description="Initial Pitch." default="0" />
+        <preference name="initialStyle" type="text" label="Initial Style" description="Initial Style." default="https://tile.openstreetmap.jp/styles/maptiler-basic-ja/style.json" />
+        <preference name="minzoom" label="Min Zoom" type="text" description="Minimun zoom allowed" default="4" />
+        <preference name="maxzoom" label="Max Zoom" type="text" description="Maximum zoom allowed" default="18" />
+        <preference name="minpitch" label="Min Pitch" type="text" description="Minimun pitch allowed" default="0" />
+        <preference name="maxpitch" label="Max Pitch" type="text" description="Maximum pitch allowed" default="60" />
+        <preference name="navigationControl" label="Use NavigationControl" type="boolean" description="Mark this option to use the Navigation Control" default="false" />
+        <preference name="scaleControl" label="Use ScaleControl" type="boolean" description="Mark this option to use the Scale Control" default="false" />
+        <preference name="geolocateControl" label="Use GeolocateControl" type="boolean" description="Mark this option to use the Geolocate Control" default="false" />
+        <preference name="attributionControl" label="Compact Attribution Control" type="boolean" description="Mark this option to use the compact Attribution Control" default="false" />
+
+    </preferences>
+
+    <wiring>
+        <inputendpoint name="layerInfo" type="text" label="Layer Info" description="Add or remove layers to the map, in addition to changing its base layer." actionlabel="Update Layers" friendcode="wms-layer-command"/>
+        <inputendpoint name="poiInput" type="text" label="Insert/Update PoI" description="Insert or update a Point of Interest." friendcode="poi poi-list"/>
+        <inputendpoint name="poiInputCenter" type="text" label="Center PoI" description="Insert or update a Point of Interest and center the map on it." actionlabel="Center" friendcode="poi poi-list" />
+        <inputendpoint name="replacePoIs" type="text" label="Replace PoIs" description="Replace all the rendered PoIs by the ones provided in the event." friendcode="poi poi-list"/>
+        <inputendpoint name="deletePoiInput" type="text" label="Delete PoI" description="Removes one or more point of interests from the map." friendcode="poi poi-list" />
+        <inputendpoint name="commnadInput" type="text" label="Execute commands" description="Excecute commnads"/>
+        <outputendpoint name="poiOutput" type="text" label="PoI selected" description="A PoI has been selected on the map" friendcode="poi"/>
+        <outputendpoint name="poiListOutput" type="text" label="Visible PoIs" description="List of visible PoIs" friendcode="poi-list"/>
+
+    </wiring>
+
+    <contents src="index.html" useplatformstyle="true"/>
+    <rendering height="300px" width="30%"/>
+
+    <translations default="en">
+        <translation lang="en">
+            <msg name="displayName">MapLibre GL widget</msg>
+            <msg name="description">Map viewer widget using MapLibre GL.</msg>
+        </translation>
+        <translation lang="ja">
+            <msg name="displayName">MapLibre GL ウィジェット</msg>
+            <msg name="description">MapLibre GL を使用した地図ビューアー</msg>
+        </translation>
+    </translations>
+
+</widget>
