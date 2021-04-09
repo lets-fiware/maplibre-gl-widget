@@ -1,6 +1,6 @@
 ## Introduction
 
-Mapbox widget
+This widget is a map viewer widget using MapLibre GL.
 
 ## Settings
 

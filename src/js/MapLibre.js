@@ -29,6 +29,13 @@
 
     };
 
+    var mapStyles = {
+        'OSM': 'map/osm.json',
+        'GSI_STD': 'map/gsi/std.json',
+        'GSI_STD_VERTICAL': 'map/gsi/std_vertical.json',
+        'GSI_PALE': 'map/gsi/pale.json',
+        'GSI_BLANK': 'map/gsi/blank.json'};
+
     MapLibre.prototype.init = function init() {
 
         MashupPlatform.widget.log(location.href, MashupPlatform.log.INFO);
@@ -38,10 +45,12 @@
             initialCenter = [0, 0];
         }
 
-        var style = MashupPlatform.prefs.get('initialStyle');
+        var style = MashupPlatform.prefs.get('mapStyle');
 
-        if (style == "") {
-            var url = new URL('map/osm.json', location.href)
+        if (style == 'CUSTOM_STYLE') {
+            style = MashupPlatform.prefs.get('customStyle');
+        } else {
+            var url = new URL(mapStyles[style], location.href)
             style = url.href
         }
 

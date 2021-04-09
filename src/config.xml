@@ -1,18 +1,18 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<widget xmlns="http://wirecloud.conwet.fi.upm.es/ns/macdescription/1" vendor="FISUDA" name="maplibregl" version="0.1.0">
+<widget xmlns="http://wirecloud.conwet.fi.upm.es/ns/macdescription/1" vendor="FISUDA" name="maplibregl" version="0.1.1b1">
 
     <details>
         <title>__MSG_displayName__</title>
         <homepage>https://github.com/lets-fiware/maplibre-gl-widget</homepage>
         <authors>Kazuhito Suda</authors>
-        <email>wireclod@letsfiware.jp</email>
+        <email>wirecloud@letsfiware.jp</email>
         <image></image>
         <smartphoneimage></smartphoneimage>
         <description>__MSG_description__</description>
         <longdescription>DESCRIPTION.md</longdescription>
         <changelog>doc/changelog.md</changelog>
         <doc>doc/userguide.md</doc>
-        <license>BSD-3-Clause License</license>
+        <license>BSD 3-Clause License</license>
         <issuetracker>https://github.com/lets-fiware/maplibre-gl-widget/issues</issuetracker>
     </details>
 
@@ -25,7 +25,15 @@
         <preference name="initialCenter" type="text" label="Initial Location" description="Decimal coordinates where map will be centered on load (e.g. `52, 5`). Leave this setting empty if you don't want to center the map at init. Remember to change the initial zoom level if you provide an initial location." default="135,35" />
         <preference name="initialZoom" type="text" label="Initial Zoom Level" description="Initial zoom level. From 1 to 22, where '1' represents the furthest level and '22' the maximum zoom level." default="3" />
         <preference name="initialPitch" type="text" label="Initial Pitch" description="Initial Pitch." default="0" />
-        <preference name="initialStyle" type="text" label="Initial Style" description="Initial Style." default="https://tile.openstreetmap.jp/styles/maptiler-basic-ja/style.json" />
+        <preference name="mapStyle" label="Map Type" type="list" description="Map Style" default="OSM">
+          <option label="Open Street Map" value="OSM"/>
+          <option label="__MSG_gsi_std__" value="GSI_STD"/>
+          <option label="__MSG_gsi_std_vertical__" value="GSI_STD_VERTICAL"/>
+          <option label="__MSG_gsi_pale__" value="GSI_PALE"/>
+          <option label="__MSG_gsi_blank__" value="GSI_BLANK"/>
+          <option label="__MSG_custom_style__" value="CUSTOM_STYLE"/>
+        </preference>
+        <preference name="customStyle" type="text" label="Custom Style" description="Custom Style." default="" />
         <preference name="minzoom" label="Min Zoom" type="text" description="Minimun zoom allowed" default="4" />
         <preference name="maxzoom" label="Max Zoom" type="text" description="Maximum zoom allowed" default="18" />
         <preference name="minpitch" label="Min Pitch" type="text" description="Minimun pitch allowed" default="0" />
@@ -56,10 +64,20 @@
         <translation lang="en">
             <msg name="displayName">MapLibre GL widget</msg>
             <msg name="description">Map viewer widget using MapLibre GL.</msg>
+            <msg name="gsi_std">GSI Standard</msg>
+            <msg name="gsi_std_vertical">GSI Standard Vertical</msg>
+            <msg name="gsi_pale">GSI Pale</msg>
+            <msg name="gsi_blank">GSI Blank</msg>
+            <msg name="custom_style">Custom Style</msg>
         </translation>
         <translation lang="ja">
             <msg name="displayName">MapLibre GL ウィジェット</msg>
             <msg name="description">MapLibre GL を使用した地図ビューアー</msg>
+            <msg name="gsi_std">地理院 標準地図</msg>
+            <msg name="gsi_std_vertical">地理院 標準地図 (縦書き)</msg>
+            <msg name="gsi_pale">地理院 淡色地図</msg>
+            <msg name="gsi_blank">地理院 白地図</msg>
+            <msg name="custom_style">カスタム スタイル</msg>
         </translation>
     </translations>
 
