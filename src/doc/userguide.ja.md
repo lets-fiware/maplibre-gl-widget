@@ -1,6 +1,6 @@
 ## Introduction
 
-Mapbox widget
+このウィジェットは、MapLibre GL を使用したマップ・ビューア・ウィジェットです。
 
 ## Settings
 
