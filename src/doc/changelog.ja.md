@@ -1,5 +1,6 @@
 ## v0.x.0
 
+- Catalogue アイコンを追加
 - removePoI エラーを修正
 - 設定機能を強化
 - rotateCameraコマンドを強化

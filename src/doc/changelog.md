@@ -1,5 +1,6 @@
 ## v0.x.0
 
+- Add catalogue icon
 - Fix removePoI error
 - Improve preference settings
 - Improve rotateCamera command
