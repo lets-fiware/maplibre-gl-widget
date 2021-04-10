@@ -108,7 +108,7 @@
 
         map.on('pitchend', () => {
             debug && MashupPlatform.widget.log('pitchend', MashupPlatform.log.INFO);
-            execEnd.call(this);
+            // execEnd.call(this);
         });
 
         map.on('rotateend', () => {
@@ -470,6 +470,11 @@
         },
         'setzoom': function (value) { // moveend
             map.setZoom(value);
+        },
+        'setpitch': function (value) { // pitchend
+            setTimeout(() => {
+                map.setPitch(value);
+            }, 0);
         },
         'reset': function (value) {
             this.queue = [];
