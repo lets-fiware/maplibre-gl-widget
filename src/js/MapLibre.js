@@ -274,7 +274,7 @@
     }
 
     MapLibre.prototype.removePoI = function removePoI(poi_info) {
-        PoIs[poi_info.id].remove;
+        PoIs[poi_info.id].remove();
         delete PoIs[poi_info.id];
     }
 
