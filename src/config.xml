@@ -51,10 +51,10 @@
 
     <wiring>
         <inputendpoint name="layerInfo" type="text" label="Layer Info" description="Add or remove layers to the map, in addition to changing its base layer." actionlabel="Update Layers" friendcode="wms-layer-command"/>
-        <inputendpoint name="poiInput" type="text" label="Insert/Update PoI" description="Insert or update a Point of Interest." friendcode="poi poi-list"/>
-        <inputendpoint name="poiInputCenter" type="text" label="Center PoI" description="Insert or update a Point of Interest and center the map on it." actionlabel="Center" friendcode="poi poi-list" />
+        <inputendpoint name="poiInput" type="text" label="Insert/Update PoIs" description="Insert or update a Point of Interest." friendcode="poi poi-list"/>
+        <inputendpoint name="poiInputCenter" type="text" label="Center PoIs" description="Insert or update a Point of Interest and center the map on it." actionlabel="Center" friendcode="poi poi-list" />
         <inputendpoint name="replacePoIs" type="text" label="Replace PoIs" description="Replace all the rendered PoIs by the ones provided in the event." friendcode="poi poi-list"/>
-        <inputendpoint name="deletePoiInput" type="text" label="Delete PoI" description="Removes one or more point of interests from the map." friendcode="poi poi-list" />
+        <inputendpoint name="deletePoiInput" type="text" label="Delete PoIs" description="Removes one or more point of interests from the map." friendcode="poi poi-list" />
         <inputendpoint name="commnadInput" type="text" label="Execute commands" description="Excecute commnads"/>
         <outputendpoint name="poiOutput" type="text" label="PoI selected" description="A PoI has been selected on the map" friendcode="poi"/>
         <outputendpoint name="poiListOutput" type="text" label="Visible PoIs" description="List of visible PoIs" friendcode="poi-list"/>

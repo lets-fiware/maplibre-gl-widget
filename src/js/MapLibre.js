@@ -25,22 +25,58 @@
         this.queue = [];
         this.executingCmd = "";
         this.hoveredStateId = null;
+        this.naviControl = null;
+        this.scaleControl = null;
+        this.geolocateControl = null;
+        this.attributionControl = null;
 
         MashupPlatform.prefs.registerCallback(function (new_preferences) {
-            debug = MashupPlatform.prefs.get('debug');
+            if (new_preferences.hasOwnProperty('initialCenter')) {
+                map.setCenter(MashupPlatform.prefs.get('initialCenter').split(','));
+            }
+            if (new_preferences.hasOwnProperty('initialZoom')) {
+                map.setZoom(MashupPlatform.prefs.get('initialZoom'));
+            }
+            if (new_preferences.hasOwnProperty('initialPitch')) {
+                map.setPitch(MashupPlatform.prefs.get('initialPitch'));
+            }
+            if (new_preferences.hasOwnProperty('mapStyle') || new_preferences.hasOwnProperty('customStyle')) {
+                map.setStyle(getBaseStyle());
+            }
+            if (new_preferences.hasOwnProperty('minzoom')) {
+                map.setMinZoom(MashupPlatform.prefs.get('minzoom'));
+            }
+            if (new_preferences.hasOwnProperty('maxzoom')) {
+                map.setMaxZoom(MashupPlatform.prefs.get('maxzoom'));
+            }
+            if (new_preferences.hasOwnProperty('minpitch')) {
+                map.setMinPitch(MashupPlatform.prefs.get('minpitch'));
+            }
+            if (new_preferences.hasOwnProperty('maxpitch')) {
+                map.setMaxPitch(MashupPlatform.prefs.get('maxpitch'));
+            }
+            if (new_preferences.hasOwnProperty('navigationControl')) {
+                updateNavigationControl.call(this)
+            }
+            if (new_preferences.hasOwnProperty('scaleControl')) {
+                updateScaleControl.call(this)
+            }
+            if (new_preferences.hasOwnProperty('geolocateControl')) {
+                updateGeolocateControl.call(this)
+            }
+            if (new_preferences.hasOwnProperty('attributionControl')) {
+                updateAttributionControl.call(this)
+            }
+            if (new_preferences.hasOwnProperty('debug')) {
+                debug = MashupPlatform.prefs.get('debug');
+            }
+
+            waiting = false;
+            aniFrame = false;
+            this.queue = [];
+            this.executingCmd = "";
         }.bind(this));
 
-    };
-
-    var mapStyles = {
-        'OSM': 'map/osm.json',
-        'GSI_STD': 'map/gsi/std.json',
-        'GSI_STD_VERTICAL': 'map/gsi/std_vertical.json',
-        'GSI_PALE': 'map/gsi/pale.json',
-        'GSI_BLANK': 'map/gsi/blank.json',
-        'GSI_BUILDING3D': 'map/gsi/building3d.json',
-        'GSI_BUILDING3D_DARK': 'map/gsi/building3ddark.json',
-        'GSI_BUILDING3D_PHOTO': 'map/gsi/building3dphoto.json'
     };
 
     MapLibre.prototype.init = function init() {
@@ -52,51 +88,30 @@
             initialCenter = [0, 0];
         }
 
-        var style = MashupPlatform.prefs.get('mapStyle');
-
-        if (style == 'CUSTOM_STYLE') {
-            style = MashupPlatform.prefs.get('customStyle');
-        } else {
-            var url = new URL(mapStyles[style], location.href)
-            style = url.href
-        }
-
         var options = {
             container: 'map',
             center: initialCenter,
             zoom: parseInt(MashupPlatform.prefs.get('initialZoom'), 10),
             pitch: parseInt(MashupPlatform.prefs.get('initialPitch'), 10),
-            style: style,
+            style: getBaseStyle(),
             attributionControl: false
         };
 
         map = new maplibregl.Map(options);
 
-        if (MashupPlatform.prefs.get("navigationControl")) {
-            map.addControl(new maplibregl.NavigationControl());
+        if (MashupPlatform.prefs.get('navigationControl')) {
+            updateNavigationControl.call(this)
         }
 
-        if (MashupPlatform.prefs.get("scaleControl")) {
-            map.addControl(new maplibregl.ScaleControl({
-                maxWidth: 200,
-                unit: 'metric'
-            }));
+        if (MashupPlatform.prefs.get('scaleControl')) {
+            updateScaleControl.call(this)
         }
 
-        map.addControl(new maplibregl.AttributionControl({
-            compact: MashupPlatform.prefs.get("attributionControl")
-        }));
-
-        if (MashupPlatform.prefs.get("geolocateControl")) {
-            map.addControl(new maplibregl.GeolocateControl({
-                positionOptions: {
-                    enableHighAccuracy: false
-                },
-                fitBoundsOptions: {maxZoom: 6},
-                trackUserLocation: true,
-                showUserLocation: true
-            }));
+        if (MashupPlatform.prefs.get('geolocateControl')) {
+            updateGeolocateControl.call(this);
         }
+
+        updateAttributionControl.call(this)
 
         map.on('load', () => {
             debug && MashupPlatform.widget.log('load', MashupPlatform.log.INFO);
@@ -270,6 +285,29 @@
     // =========================================================================
     // PRIVATE MEMBERS
     // =========================================================================
+    var mapStyles = {
+        'OSM': 'map/osm.json',
+        'GSI_STD': 'map/gsi/std.json',
+        'GSI_STD_VERTICAL': 'map/gsi/std_vertical.json',
+        'GSI_PALE': 'map/gsi/pale.json',
+        'GSI_BLANK': 'map/gsi/blank.json',
+        'GSI_BUILDING3D': 'map/gsi/building3d.json',
+        'GSI_BUILDING3D_DARK': 'map/gsi/building3ddark.json',
+        'GSI_BUILDING3D_PHOTO': 'map/gsi/building3dphoto.json'
+    };
+
+    var getBaseStyle = function getBaseStyle() {
+        var style = MashupPlatform.prefs.get('mapStyle');
+
+        if (style == 'CUSTOM_STYLE') {
+            style = MashupPlatform.prefs.get('customStyle');
+        } else {
+            var url = new URL(mapStyles[style], location.href)
+            style = url.href
+        }
+        return style
+    }
+
     var build_marker = function build_marker(icon) {
         var url = (typeof icon === 'string') ? icon : icon.src;
         var el = document.createElement('div');
@@ -281,6 +319,56 @@
         el.style.height = '30px';
 
         return el;
+    }
+
+    var updateNavigationControl = function updateNavigationControl() {
+        if (MashupPlatform.prefs.get('navigationControl')) {
+            this.naviControl = new maplibregl.NavigationControl()
+            map.addControl(this.naviControl);
+        } else {
+            map.removeControl(this.naviControl);
+            this.naviControl = null;
+        }
+    }
+
+    var updateScaleControl = function updateScaleControl() {
+        if (MashupPlatform.prefs.get('scaleControl')) {
+            this.scaleControl = new maplibregl.ScaleControl({
+                maxWidth: 200,
+                unit: 'metric'
+            });
+            map.addControl(this.scaleControl);
+        } else {
+            map.removeControl(this.scaleControl);
+            this.scaleControl = null;
+        }
+    }
+
+    var updateGeolocateControl = function updateGeolocateControl() {
+        if (MashupPlatform.prefs.get('geolocateControl')) {
+            this.geolocateControl = new maplibregl.GeolocateControl({
+                positionOptions: {
+                    enableHighAccuracy: false
+                },
+                fitBoundsOptions: {maxZoom: 6},
+                trackUserLocation: true,
+                showUserLocation: true
+            });
+            map.addControl(this.geolocateControl);
+        } else {
+            map.removeControl(this.geolocateControl);
+            this.geolocateControl = null;
+        }
+    }
+
+    var updateAttributionControl = function updateAttributionControl() {
+        if (this.attributionControl != null) {
+            map.removeControl(this.attributionControl);
+        }
+        this.attributionControl = new maplibregl.AttributionControl({
+            compact: MashupPlatform.prefs.get('attributionControl')
+        });
+        map.addControl(this.attributionControl);
     }
 
     var build_marker_webfont = function build_marker_webfont(poi_info) {
@@ -497,6 +585,7 @@
         },
         'reset': function (value) {
             waiting = false;
+            aniFrame = false;
             this.queue = [];
             this.executingCmd = "";
         },
