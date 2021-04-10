@@ -23,7 +23,7 @@
 
     <preferences>
         <preference name="initialCenter" type="text" label="Initial Location" description="Decimal coordinates where map will be centered on load (e.g. `52, 5`). Leave this setting empty if you don't want to center the map at init. Remember to change the initial zoom level if you provide an initial location." default="135,35" />
-        <preference name="initialZoom" type="text" label="Initial Zoom Level" description="Initial zoom level. From 1 to 22, where '1' represents the furthest level and '22' the maximum zoom level." default="3" />
+        <preference name="initialZoom" type="text" label="Initial Zoom Level" description="Initial zoom level. From 1 to 22, where '1' represents the furthest level and '22' the maximum zoom level." default="6" />
         <preference name="initialPitch" type="text" label="Initial Pitch" description="Initial Pitch." default="0" />
         <preference name="mapStyle" label="Map Type" type="list" description="Map Style" default="OSM">
           <option label="Open Street Map" value="OSM"/>
