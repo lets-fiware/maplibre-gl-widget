@@ -17,6 +17,7 @@
     // =========================================================================
     var map;
     var PoIs = {};
+    var debug = false;
 
     var MapLibre = function MapLibre() {
         this.queue = [];
@@ -24,7 +25,7 @@
         this.hoveredStateId = null;
 
         MashupPlatform.prefs.registerCallback(function (new_preferences) {
-
+            debug = MashupPlatform.prefs.get('debug');
         }.bind(this));
 
     };
@@ -42,7 +43,7 @@
 
     MapLibre.prototype.init = function init() {
 
-        MashupPlatform.widget.log(location.href, MashupPlatform.log.INFO);
+        debug = MashupPlatform.prefs.get('debug');
 
         var initialCenter = MashupPlatform.prefs.get("initialCenter").split(",").map(Number);
         if (initialCenter.length != 2 || !Number.isFinite(initialCenter[0]) || !Number.isFinite(initialCenter[1])) {
@@ -96,22 +97,27 @@
         }
 
         map.on('load', () => {
+            debug && MashupPlatform.widget.log('load', MashupPlatform.log.INFO);
             execEnd.call(this);
         });
 
         map.on('moveend', () => {
+            // debug && MashupPlatform.widget.log('moveend', MashupPlatform.log.INFO);
             execEnd.call(this);
         });
 
         map.on('pitchend', () => {
+            debug && MashupPlatform.widget.log('pitchend', MashupPlatform.log.INFO);
             execEnd.call(this);
         });
 
         map.on('rotateend', () => {
+            // debug && MashupPlatform.widget.log('rotateend', MashupPlatform.log.INFO);
             execEnd.call(this);
         });
 
         map.on('zoomend', () => {
+            debug && MashupPlatform.widget.log('zoomend', MashupPlatform.log.INFO);
             execEnd.call(this);
         });
 
@@ -119,6 +125,7 @@
         });
 
         map.on('resize', () => {
+            debug && MashupPlatform.widget.log('resize', MashupPlatform.log.INFO);
         });
 
         map.on('mousemove', (e) => {

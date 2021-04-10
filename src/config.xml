@@ -45,6 +45,7 @@
         <preference name="scaleControl" label="Use ScaleControl" type="boolean" description="Mark this option to use the Scale Control" default="false" />
         <preference name="geolocateControl" label="Use GeolocateControl" type="boolean" description="Mark this option to use the Geolocate Control" default="false" />
         <preference name="attributionControl" label="Compact Attribution Control" type="boolean" description="Mark this option to use the compact Attribution Control" default="false" />
+        <preference name="debug" label="Debug" type="boolean" description="debug" default="false" />
 
     </preferences>
 
