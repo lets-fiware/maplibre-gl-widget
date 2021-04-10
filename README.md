@@ -2,6 +2,8 @@
 
 [![](https://nexus.lab.fiware.org/repository/raw/public/badges/chapters/visualization.svg)](https://www.fiware.org/developers/catalogue/)
 [![License: BSD-3-Clause](https://img.shields.io/github/license/lets-fiware/maplibre-gl-widget.svg)](https://opensource.org/licenses/BSD-3-Clause)<br/>
+![Build](https://github.com/lets-fiware/maplibre-gl-widget/workflows/Build/badge.svg)
+![GitHub all releases](https://img.shields.io/github/downloads/lets-fiware/maplibre-gl-widget/total)
 
 This is a map viewer widget uses MapLibre GL. It can receive Layers or Point of Interest data and display them on the map.
 
