@@ -1,0 +1,30 @@
+name: Build
+
+on:
+
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+
+  browsers:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+
+      - name: Use latest ESR version of Firefox
+        uses: browser-actions/setup-firefox@latest
+        with:
+          firefox-version: latest-esr
+
+      - run: npm ci
+      - run: npm install grunt-cli -g
+      - run: grunt build

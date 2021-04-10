@@ -1,5 +1,10 @@
 # MapLibre GL widget
 
+[![](https://nexus.lab.fiware.org/repository/raw/public/badges/chapters/visualization.svg)](https://www.fiware.org/developers/catalogue/)
+[![License: BSD-3-Clause](https://img.shields.io/github/license/lets-fiware/maplibre-gl-widget.svg)](https://opensource.org/licenses/BSD-3-Clause)<br/>
+![Build](https://github.com/lets-fiware/maplibre-gl-widget/workflows/Build/badge.svg)
+![GitHub all releases](https://img.shields.io/github/downloads/lets-fiware/maplibre-gl-widget/total)
+
 This is a map viewer widget uses MapLibre GL. It can receive Layers or Point of Interest data and display them on the map.
 
 Build
@@ -47,8 +52,8 @@ The Maplibre GL widget makes use of the following libraries:
 
 | Libraries                                                             | OSS License          |
 | --------------------------------------------------------------------- | -------------------- |
-| [maplibre/maplibre-gl-js](https://github.com/maplibre/maplibre-gl-js) | BSD 3-Clause License |
-| [Geodan/mapbox-3dtiles](https://github.com/Geodan/mapbox-3dtiles)     | BSD 3-Clause License |
+| [maplibre/maplibre-gl-js](https://github.com/maplibre/maplibre-gl-js) | 3-Clause BSD License |
+| [Geodan/mapbox-3dtiles](https://github.com/Geodan/mapbox-3dtiles)     | 3-Clause BSD License |
 | [mrdoob/three.js](https://github.com/mrdoob/three.js/)                | MIT License          |
 
 The dependencies of dependencies have been omitted from the list.
@@ -56,4 +61,4 @@ The dependencies of dependencies have been omitted from the list.
 ## Copyright and License
 
 Copyright (c) 2021 Kazuhito Suda<br>
-Licensed under the [BSD 3-Clause License](./LICENSE).
+Licensed under the [3-Clause BSD License](./LICENSE).

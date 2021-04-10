@@ -50,7 +50,10 @@ module.exports = function (grunt) {
                     'https://raw.githubusercontent.com/gsi-cyberjapan/gsivectortile-mapbox-gl-js/master/std.json',
                     'https://raw.githubusercontent.com/gsi-cyberjapan/gsivectortile-mapbox-gl-js/master/std_vertical.json',
                     'https://raw.githubusercontent.com/gsi-cyberjapan/gsivectortile-mapbox-gl-js/master/pale.json',
-                    'https://raw.githubusercontent.com/gsi-cyberjapan/gsivectortile-mapbox-gl-js/master/blank.json'
+                    'https://raw.githubusercontent.com/gsi-cyberjapan/gsivectortile-mapbox-gl-js/master/blank.json',
+                    'https://raw.githubusercontent.com/gsi-cyberjapan/gsivectortile-3d-like-building/master/building3d.json',
+                    'https://raw.githubusercontent.com/gsi-cyberjapan/gsivectortile-3d-like-building/master/building3ddark.json',
+                    'https://raw.githubusercontent.com/gsi-cyberjapan/gsivectortile-3d-like-building/master/building3dphoto.json'
                 ],
                 dest: 'build/map/map/gsi'
             }

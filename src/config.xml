@@ -12,7 +12,7 @@
         <longdescription>DESCRIPTION.md</longdescription>
         <changelog>doc/changelog.md</changelog>
         <doc>doc/userguide.md</doc>
-        <license>BSD 3-Clause License</license>
+        <license>The 3-Clause BSD License</license>
         <issuetracker>https://github.com/lets-fiware/maplibre-gl-widget/issues</issuetracker>
     </details>
 
@@ -23,7 +23,7 @@
 
     <preferences>
         <preference name="initialCenter" type="text" label="Initial Location" description="Decimal coordinates where map will be centered on load (e.g. `52, 5`). Leave this setting empty if you don't want to center the map at init. Remember to change the initial zoom level if you provide an initial location." default="135,35" />
-        <preference name="initialZoom" type="text" label="Initial Zoom Level" description="Initial zoom level. From 1 to 22, where '1' represents the furthest level and '22' the maximum zoom level." default="3" />
+        <preference name="initialZoom" type="text" label="Initial Zoom Level" description="Initial zoom level. From 1 to 22, where '1' represents the furthest level and '22' the maximum zoom level." default="6" />
         <preference name="initialPitch" type="text" label="Initial Pitch" description="Initial Pitch." default="0" />
         <preference name="mapStyle" label="Map Type" type="list" description="Map Style" default="OSM">
           <option label="Open Street Map" value="OSM"/>
@@ -31,6 +31,9 @@
           <option label="__MSG_gsi_std_vertical__" value="GSI_STD_VERTICAL"/>
           <option label="__MSG_gsi_pale__" value="GSI_PALE"/>
           <option label="__MSG_gsi_blank__" value="GSI_BLANK"/>
+          <option label="__MSG_gsi_building3d__" value="GSI_BUILDING3D"/>
+          <option label="__MSG_gsi_building3d_dark__" value="GSI_BUILDING3D_DARK"/>
+          <option label="__MSG_gsi_building3d_photo__" value="GSI_BUILDING3D_PHOTO"/>
           <option label="__MSG_custom_style__" value="CUSTOM_STYLE"/>
         </preference>
         <preference name="customStyle" type="text" label="Custom Style" description="Custom Style." default="" />
@@ -42,15 +45,16 @@
         <preference name="scaleControl" label="Use ScaleControl" type="boolean" description="Mark this option to use the Scale Control" default="false" />
         <preference name="geolocateControl" label="Use GeolocateControl" type="boolean" description="Mark this option to use the Geolocate Control" default="false" />
         <preference name="attributionControl" label="Compact Attribution Control" type="boolean" description="Mark this option to use the compact Attribution Control" default="false" />
+        <preference name="debug" label="Debug" type="boolean" description="debug" default="false" />
 
     </preferences>
 
     <wiring>
         <inputendpoint name="layerInfo" type="text" label="Layer Info" description="Add or remove layers to the map, in addition to changing its base layer." actionlabel="Update Layers" friendcode="wms-layer-command"/>
-        <inputendpoint name="poiInput" type="text" label="Insert/Update PoI" description="Insert or update a Point of Interest." friendcode="poi poi-list"/>
-        <inputendpoint name="poiInputCenter" type="text" label="Center PoI" description="Insert or update a Point of Interest and center the map on it." actionlabel="Center" friendcode="poi poi-list" />
+        <inputendpoint name="poiInput" type="text" label="Insert/Update PoIs" description="Insert or update a Point of Interest." friendcode="poi poi-list"/>
+        <inputendpoint name="poiInputCenter" type="text" label="Center PoIs" description="Insert or update a Point of Interest and center the map on it." actionlabel="Center" friendcode="poi poi-list" />
         <inputendpoint name="replacePoIs" type="text" label="Replace PoIs" description="Replace all the rendered PoIs by the ones provided in the event." friendcode="poi poi-list"/>
-        <inputendpoint name="deletePoiInput" type="text" label="Delete PoI" description="Removes one or more point of interests from the map." friendcode="poi poi-list" />
+        <inputendpoint name="deletePoiInput" type="text" label="Delete PoIs" description="Removes one or more point of interests from the map." friendcode="poi poi-list" />
         <inputendpoint name="commnadInput" type="text" label="Execute commands" description="Excecute commnads"/>
         <outputendpoint name="poiOutput" type="text" label="PoI selected" description="A PoI has been selected on the map" friendcode="poi"/>
         <outputendpoint name="poiListOutput" type="text" label="Visible PoIs" description="List of visible PoIs" friendcode="poi-list"/>
@@ -68,6 +72,9 @@
             <msg name="gsi_std_vertical">GSI Standard Vertical</msg>
             <msg name="gsi_pale">GSI Pale</msg>
             <msg name="gsi_blank">GSI Blank</msg>
+            <msg name="gsi_building3d">GSI 3D like building</msg>
+            <msg name="gsi_building3d_dark">GSI 3D link building dark</msg>
+            <msg name="gsi_building3d_photo">GSI 3D link building photo</msg>
             <msg name="custom_style">Custom Style</msg>
         </translation>
         <translation lang="ja">
@@ -77,6 +84,9 @@
             <msg name="gsi_std_vertical">地理院 標準地図 (縦書き)</msg>
             <msg name="gsi_pale">地理院 淡色地図</msg>
             <msg name="gsi_blank">地理院 白地図</msg>
+            <msg name="gsi_building3d">地理院 3D風地図</msg>
+            <msg name="gsi_building3d_dark">地理院 3D風地図 ダーク</msg>
+            <msg name="gsi_building3d_photo">地理院 3D風地図 写真</msg>
             <msg name="custom_style">カスタム スタイル</msg>
         </translation>
     </translations>
