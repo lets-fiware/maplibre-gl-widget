@@ -3,7 +3,7 @@
  * https://github.com/lets-fiware/maplibre-gl-widget
  *
  * Copyright (c) 2021 Kazuhito Suda
- * Licensed under the BSD 3-Clause License
+ * Licensed under the 3-Clause BSD License
  */
 
 /* globals maplibregl, Mapbox3DTiles */

@@ -12,7 +12,7 @@
         <longdescription>DESCRIPTION.md</longdescription>
         <changelog>doc/changelog.md</changelog>
         <doc>doc/userguide.md</doc>
-        <license>BSD 3-Clause License</license>
+        <license>The 3-Clause BSD License</license>
         <issuetracker>https://github.com/lets-fiware/maplibre-gl-widget/issues</issuetracker>
     </details>
 
