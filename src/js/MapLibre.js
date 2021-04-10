@@ -18,6 +18,8 @@
     var map;
     var PoIs = {};
     var debug = false;
+    var aniFrame = false;
+    var waiting = false;
 
     var MapLibre = function MapLibre() {
         this.queue = [];
@@ -394,18 +396,23 @@
     }
 
     var _execCommands = function _execCommands(commands, _executingCmd) {
-        this.executingCmd = _executingCmd;
-        if (!Array.isArray(commands)) {
-            commands = [commands];
-        }
-        this.queue = this.queue.concat(commands);
+        if (!waiting) {
+            this.executingCmd = _executingCmd;
+            if (!Array.isArray(commands)) {
+                commands = [commands];
+            }
+            this.queue = this.queue.concat(commands);
 
-        if (this.executingCmd == "" && this.queue.length > 0) {
-            var cmd = this.queue.shift();
-            this.executingCmd = cmd.type.toLowerCase();
-            commandList[this.executingCmd].call(this, cmd.value);
+            if (this.executingCmd == "" && this.queue.length > 0) {
+                var cmd = this.queue.shift();
+                if (!cmd.hasOwnProperty('value')) {
+                    cmd.value = {}
+                }
+                this.executingCmd = cmd.type.toLowerCase();
+                commandList[this.executingCmd].call(this, cmd.value);
+            }
         }
-        MashupPlatform.widget.log(`exec: ${this.executingCmd}, queue: ${this.queue.length}`, MashupPlatform.log.INFO);
+        debug && MashupPlatform.widget.log(`exec: ${this.executingCmd}, queue: ${this.queue.length}`, MashupPlatform.log.INFO);
     }
 
     var execEnd = function execEnd() {
@@ -440,15 +447,27 @@
             execEnd.call(this);
         },
         'rotatecamera': function (value) {
-            var timestamp = value
-            var rotateCamera = function rotateCamera(timestamp) {
-                // clamp the rotation between 0 -360 degrees
-                // Divide timestamp by 100 to slow rotation to ~10 degrees / sec
-                map.rotateTo((timestamp / 100) % 360, { duration: 0 });
-                // Request the next frame of the animation.
-                requestAnimationFrame(rotateCamera);
+            if (!aniFrame) {
+                aniFrame = true
+                var rotateCamera = function rotateCamera(value) {
+                    if (aniFrame) {
+                        if (typeof value === 'number') {
+                            // clamp the rotation between 0 -360 degrees
+                            // Divide timestamp by 100 to slow rotation to ~10 degrees / sec
+                            map.rotateTo((value / 100) % 360, { duration: 0 });
+                        } else {
+                            map.rotateTo(value.bearing, value.options);
+                        }
+                        // Request the next frame of the animation.
+                        requestAnimationFrame(rotateCamera);
+                    }
+                }
+                rotateCamera(value);
             }
-            rotateCamera(timestamp);
+            execEnd.call(this);
+        },
+        'stopcamera': function (value) {
+            aniFrame = false
             execEnd.call(this);
         },
         'attributioncontrol': function (value) {
@@ -477,13 +496,16 @@
             }, 0);
         },
         'reset': function (value) {
+            waiting = false;
             this.queue = [];
             this.executingCmd = "";
         },
         'wait': function (value) {
+            waiting = true;
             setTimeout(() => {
+                waiting = false;
                 _execCommands.call(this, [], "");
-            }, value);
+            }, value * 1000);
         },
     }
 
