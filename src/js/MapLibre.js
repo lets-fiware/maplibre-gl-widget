@@ -34,7 +34,11 @@
         'GSI_STD': 'map/gsi/std.json',
         'GSI_STD_VERTICAL': 'map/gsi/std_vertical.json',
         'GSI_PALE': 'map/gsi/pale.json',
-        'GSI_BLANK': 'map/gsi/blank.json'};
+        'GSI_BLANK': 'map/gsi/blank.json',
+        'GSI_BUILDING3D': 'map/gsi/building3d.json',
+        'GSI_BUILDING3D_DARK': 'map/gsi/building3ddark.json',
+        'GSI_BUILDING3D_PHOTO': 'map/gsi/building3dphoto.json'
+    };
 
     MapLibre.prototype.init = function init() {
 

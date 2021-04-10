@@ -31,6 +31,9 @@
           <option label="__MSG_gsi_std_vertical__" value="GSI_STD_VERTICAL"/>
           <option label="__MSG_gsi_pale__" value="GSI_PALE"/>
           <option label="__MSG_gsi_blank__" value="GSI_BLANK"/>
+          <option label="__MSG_gsi_building3d__" value="GSI_BUILDING3D"/>
+          <option label="__MSG_gsi_building3d_dark__" value="GSI_BUILDING3D_DARK"/>
+          <option label="__MSG_gsi_building3d_photo__" value="GSI_BUILDING3D_PHOTO"/>
           <option label="__MSG_custom_style__" value="CUSTOM_STYLE"/>
         </preference>
         <preference name="customStyle" type="text" label="Custom Style" description="Custom Style." default="" />
@@ -68,6 +71,9 @@
             <msg name="gsi_std_vertical">GSI Standard Vertical</msg>
             <msg name="gsi_pale">GSI Pale</msg>
             <msg name="gsi_blank">GSI Blank</msg>
+            <msg name="gsi_building3d">GSI 3D like building</msg>
+            <msg name="gsi_building3d_dark">GSI 3D link building dark</msg>
+            <msg name="gsi_building3d_photo">GSI 3D link building photo</msg>
             <msg name="custom_style">Custom Style</msg>
         </translation>
         <translation lang="ja">
@@ -77,6 +83,9 @@
             <msg name="gsi_std_vertical">地理院 標準地図 (縦書き)</msg>
             <msg name="gsi_pale">地理院 淡色地図</msg>
             <msg name="gsi_blank">地理院 白地図</msg>
+            <msg name="gsi_building3d">地理院 3D風地図</msg>
+            <msg name="gsi_building3d_dark">地理院 3D風地図 ダーク</msg>
+            <msg name="gsi_building3d_photo">地理院 3D風地図 写真</msg>
             <msg name="custom_style">カスタム スタイル</msg>
         </translation>
     </translations>
