@@ -1,4 +1,4 @@
-## MapLibre GL widget x.x.x
+## MapLibre GL widget v0.2.0 - 2021/4/11
 
 - Add catalogue icon
 - Fix removePoI error (#3)
@@ -11,6 +11,6 @@
 - Add map styles (#2)
 - Add contribution guideline (#1)
 
-## MapLibre GL widget 0.1.0 - 2021/4/9
+## MapLibre GL widget v0.1.0 - 2021/4/9
 
 - Initial release
