@@ -478,8 +478,8 @@
     }
 
     var sendSelectedPoI = function sendSelectedPoI() {
-        if (MashupPlatform.widget.outputs.poiListOutput.connected) {
-            MashupPlatform.widget.outputs.poiListOutput.pushEvent(this.data);
+        if (MashupPlatform.widget.outputs.poiOutput.connected) {
+            MashupPlatform.widget.outputs.poiOutput.pushEvent(this.data);
         }
     }
 
