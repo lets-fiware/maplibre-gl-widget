@@ -1,3 +1,8 @@
+## v0.x.x
+
+- Visible PoIs 機能を追加
+- PoI selected エラーを修正
+
 ## v0.2.0
 
 - Catalogue アイコンを追加

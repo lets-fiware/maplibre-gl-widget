@@ -120,6 +120,7 @@
 
         map.on('moveend', () => {
             // debug && MashupPlatform.widget.log('moveend', MashupPlatform.log.INFO);
+            updatePoiList.call(this);
             execEnd.call(this);
         });
 
@@ -135,6 +136,7 @@
 
         map.on('zoomend', () => {
             debug && MashupPlatform.widget.log('zoomend', MashupPlatform.log.INFO);
+            updatePoiList.call(this);
             execEnd.call(this);
         });
 
@@ -142,6 +144,7 @@
         });
 
         map.on('resize', () => {
+            updatePoiList.call(this);
             debug && MashupPlatform.widget.log('resize', MashupPlatform.log.INFO);
         });
 
@@ -180,7 +183,35 @@
         }
     }
 
-    MapLibre.prototype.registerPoI = function registerPoI(poi_info) {
+    MapLibre.prototype.registerPoIs = function registerPoIs(poi_info) {
+        poi_info.forEach(poi =>registerPoI(poi));
+    }
+
+    MapLibre.prototype.replacePoIs = function replacePoIs(poi_info) {
+        for (var key in PoIs) {
+            PoIs[key].remove();
+        };
+        PoIs = {};
+        poi_info.forEach(poi =>registerPoI(poi));
+        updatePoiList.call(this);
+    }
+
+    MapLibre.prototype.centerPoI = function centerPoI(poi_info) {
+        if (poi_info.length) {
+            poi_info.forEach(poi =>registerPoI(poi));
+            map.setCenter(poi_info[poi_info.length - 1].location.coordinates);
+            updatePoiList.call(this);
+        }
+    }
+
+    MapLibre.prototype.removePoIs = function removePoIs(poi_info) {
+        for (var key in PoIs) {
+            PoIs[key].remove();
+            delete PoIs[key];
+        };
+    }
+
+    var registerPoI = function registerPoI(poi_info) {
 
         if (poi_info.location.type == "Point") {
             var poi = PoIs[poi_info.id];
@@ -197,7 +228,13 @@
 
             // Add popup
             if (poi_info.title || poi_info.infoWindow) {
-                poi.setPopup(new maplibregl.Popup({ offset: 25 }).setHTML("<b>" + poi_info.title + "</b><br>" + poi_info.infoWindow));
+                var popup = new maplibregl.Popup({ offset: 25 }).setHTML("<b>" + poi_info.title + "</b><br>" + poi_info.infoWindow);
+                popup.on('close', () => {
+                    if (MashupPlatform.widget.outputs.poiOutput.connected) {
+                        MashupPlatform.widget.outputs.poiOutput.pushEvent(null);
+                    }
+                });
+                poi.setPopup(popup);
             }
 
             // Save PoI data to send it on the map's outputs
@@ -256,26 +293,7 @@
                 }
             });
         }
-    }
-
-    MapLibre.prototype.replacePoIs = function replacePoIs(poi_info) {
-        for (var key in PoIs) {
-            PoIs[key].remove();
-        }
-        PoIs = {};
-        poi_info.forEach(this.registerPoI, this);
-    }
-
-    MapLibre.prototype.centerPoI = function centerPoI(poi_info) {
-        if (poi_info.length) {
-            poi_info.forEach(this.registerPoI, this);
-            map.setCenter(poi_info[poi_info.length - 1 ].location.coordinates);
-        }
-    }
-
-    MapLibre.prototype.removePoI = function removePoI(poi_info) {
-        PoIs[poi_info.id].remove();
-        delete PoIs[poi_info.id];
+        updatePoiList.call(this);
     }
 
     MapLibre.prototype.execCommands = function (commands) {
@@ -306,19 +324,6 @@
             style = url.href
         }
         return style
-    }
-
-    var build_marker = function build_marker(icon) {
-        var url = (typeof icon === 'string') ? icon : icon.src;
-        var el = document.createElement('div');
-        el.className = 'marker';
-        el.style.backgroundImage = 'url(' + url + ')';
-        el.style.backgroundRepeat = 'no-repeat';
-        el.style.backgroundSize = '100% auto';
-        el.style.width = '30px';
-        el.style.height = '30px';
-
-        return el;
     }
 
     var updateNavigationControl = function updateNavigationControl() {
@@ -369,6 +374,19 @@
             compact: MashupPlatform.prefs.get('attributionControl')
         });
         map.addControl(this.attributionControl);
+    }
+
+    var build_marker = function build_marker(icon) {
+        var url = (typeof icon === 'string') ? icon : icon.src;
+        var el = document.createElement('div');
+        el.className = 'marker';
+        el.style.backgroundImage = 'url(' + url + ')';
+        el.style.backgroundRepeat = 'no-repeat';
+        el.style.backgroundSize = '100% auto';
+        el.style.width = '30px';
+        el.style.height = '30px';
+
+        return el;
     }
 
     var build_marker_webfont = function build_marker_webfont(poi_info) {
@@ -480,6 +498,23 @@
     var sendSelectedPoI = function sendSelectedPoI() {
         if (MashupPlatform.widget.outputs.poiOutput.connected) {
             MashupPlatform.widget.outputs.poiOutput.pushEvent(this.data);
+        }
+    }
+
+    var updatePoiList = function updatePoiList() {
+        if (MashupPlatform.widget.outputs.poiListOutput.connected) {
+            var bounds = map.getBounds();
+            var poiList = [];
+            for (var key in PoIs) {
+                var poi = PoIs[key];
+                if (!poi.hasOwnProperty('__lnglat')) {
+                    poi.__lnglat = new maplibregl.LngLat(poi.data.location.coordinates[0], poi.data.location.coordinates[1]);
+                }
+                if (bounds.contains(poi.__lnglat)) {
+                    poiList.push(poi.data);
+                }
+            };
+            MashupPlatform.widget.outputs.poiListOutput.pushEvent(poiList);
         }
     }
 

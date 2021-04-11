@@ -1,3 +1,8 @@
+## v0.x.x
+
+- Add Visible PoIs feature
+- Fix PoI selected
+
 ## v0.2.0
 
 - Add catalogue icon

@@ -1,3 +1,8 @@
+## MapLibre GL widget v0.x.x
+
+- Add Visible PoIs feature
+- Fix PoI selected
+
 ## MapLibre GL widget v0.2.0 - 2021/4/11
 
 - Add catalogue icon
