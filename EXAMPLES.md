@@ -139,7 +139,7 @@
 
 - glyph: Font Awesome 4 icon
 - color: #xxxxxx or color name
-- fillCOlor: #xxxxxx or  color name
+- fillColor: #xxxxxx or  color name
 
 #### color name
 

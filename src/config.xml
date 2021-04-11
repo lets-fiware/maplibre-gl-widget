@@ -1,12 +1,12 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<widget xmlns="http://wirecloud.conwet.fi.upm.es/ns/macdescription/1" vendor="FISUDA" name="maplibregl" version="0.1.1b1">
+<widget xmlns="http://wirecloud.conwet.fi.upm.es/ns/macdescription/1" vendor="FISUDA" name="maplibregl" version="0.2.0">
 
     <details>
         <title>__MSG_displayName__</title>
         <homepage>https://github.com/lets-fiware/maplibre-gl-widget</homepage>
         <authors>Kazuhito Suda</authors>
         <email>wirecloud@letsfiware.jp</email>
-        <image></image>
+        <image>images/catalogue.png</image>
         <smartphoneimage></smartphoneimage>
         <description>__MSG_description__</description>
         <longdescription>DESCRIPTION.md</longdescription>
