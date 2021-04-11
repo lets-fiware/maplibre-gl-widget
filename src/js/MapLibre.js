@@ -120,7 +120,7 @@
 
         map.on('moveend', () => {
             // debug && MashupPlatform.widget.log('moveend', MashupPlatform.log.INFO);
-            updatePoiList.call(this);
+            sendPoIList.call(this);
             execEnd.call(this);
         });
 
@@ -136,7 +136,7 @@
 
         map.on('zoomend', () => {
             debug && MashupPlatform.widget.log('zoomend', MashupPlatform.log.INFO);
-            updatePoiList.call(this);
+            sendPoIList.call(this);
             execEnd.call(this);
         });
 
@@ -144,7 +144,7 @@
         });
 
         map.on('resize', () => {
-            updatePoiList.call(this);
+            sendPoIList.call(this);
             debug && MashupPlatform.widget.log('resize', MashupPlatform.log.INFO);
         });
 
@@ -185,6 +185,7 @@
 
     MapLibre.prototype.registerPoIs = function registerPoIs(poi_info) {
         poi_info.forEach(poi =>registerPoI(poi));
+        sendPoIList.call(this);
     }
 
     MapLibre.prototype.replacePoIs = function replacePoIs(poi_info) {
@@ -193,14 +194,14 @@
         };
         PoIs = {};
         poi_info.forEach(poi =>registerPoI(poi));
-        updatePoiList.call(this);
+        sendPoIList.call(this);
     }
 
     MapLibre.prototype.centerPoI = function centerPoI(poi_info) {
         if (poi_info.length) {
             poi_info.forEach(poi =>registerPoI(poi));
             map.setCenter(poi_info[poi_info.length - 1].location.coordinates);
-            updatePoiList.call(this);
+            sendPoIList.call(this);
         }
     }
 
@@ -212,7 +213,6 @@
     }
 
     var registerPoI = function registerPoI(poi_info) {
-
         if (poi_info.location.type == "Point") {
             var poi = PoIs[poi_info.id];
 
@@ -293,7 +293,6 @@
                 }
             });
         }
-        updatePoiList.call(this);
     }
 
     MapLibre.prototype.execCommands = function (commands) {
@@ -501,7 +500,7 @@
         }
     }
 
-    var updatePoiList = function updatePoiList() {
+    var sendPoIList = function sendPoIList() {
         if (MashupPlatform.widget.outputs.poiListOutput.connected) {
             var bounds = map.getBounds();
             var poiList = [];
