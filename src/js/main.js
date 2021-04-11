@@ -13,13 +13,17 @@
     "use strict";
 
     var parseInputEndpointData = function parseInputEndpointData(data) {
+        if (data == null) {
+            data = [];
+        }
+
         if (typeof data === "string") {
             try {
                 data = JSON.parse(data);
             } catch (e) {
                 throw new MashupPlatform.wiring.EndpointTypeError();
             }
-        } else if (data == null || typeof data !== "object") {
+        } else if (typeof data !== "object") {
             throw new MashupPlatform.wiring.EndpointTypeError();
         }
         return data;
@@ -58,7 +62,7 @@
         if (!Array.isArray(poi_info)) {
             poi_info = [poi_info];
         }
-        poi_info.forEach(maplibre.registerPoI);
+        maplibre.registerPoIs(poi_info);
     });
 
     MashupPlatform.wiring.registerCallback('replacePoIs', (poi_info) => {
@@ -71,17 +75,12 @@
     });
 
     MashupPlatform.wiring.registerCallback('poiInputCenter', (poi_info) => {
-        if (poi_info == null) {
-            poi_info = [];
-        }
-
         poi_info = parseInputEndpointData(poi_info);
 
         if (!Array.isArray(poi_info)) {
             poi_info = [poi_info];
         }
 
-        poi_info.forEach(maplibre.registerPoI, maplibre);
         maplibre.centerPoI(poi_info);
     });
 
@@ -91,7 +90,7 @@
         if (!Array.isArray(poi_info)) {
             poi_info = [poi_info];
         }
-        poi_info.forEach(maplibre.removePoI, maplibre);
+        maplibre.removePoIs(poi_info);
     });
 
     MashupPlatform.wiring.registerCallback('commnadInput', (commandList) => {
