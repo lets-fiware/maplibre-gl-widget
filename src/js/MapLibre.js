@@ -83,7 +83,7 @@
 
         debug = MashupPlatform.prefs.get('debug');
 
-        var initialCenter = MashupPlatform.prefs.get("initialCenter").split(",").map(Number);
+        var initialCenter = MashupPlatform.prefs.get('initialCenter').split(',').map(Number);
         if (initialCenter.length != 2 || !Number.isFinite(initialCenter[0]) || !Number.isFinite(initialCenter[1])) {
             initialCenter = [0, 0];
         }
@@ -153,6 +153,47 @@
 
         map.on('mouseleave', () => {
         });
+
+        // Port of https://github.com/Wirecloud/ol3-map-widget
+        // Set position button
+        const setcenter_button = document.getElementById('setcenter-button');
+        setcenter_button.addEventListener('click', (event) => {
+            const currentCenter = map.getCenter();
+            MashupPlatform.prefs.set(
+                "initialCenter",
+                currentCenter.lng + ',' + currentCenter.lat
+            );
+        });
+        const setzoom_button = document.getElementById('setzoom-button');
+        setzoom_button.addEventListener('click', (event) => {
+            MashupPlatform.prefs.set(
+                'initialZoom',
+                map.getZoom()
+            );
+        });
+        const setcenterzoom_button = document.getElementById('setcenterzoom-button');
+        setcenterzoom_button.addEventListener('click', (event) => {
+            const currentCenter = map.getCenter();
+            MashupPlatform.prefs.set({
+                initialCenter: currentCenter.lng + ',' + currentCenter.lat,
+                initialZoom: map.getZoom()
+            });
+        });
+        const update_ui_buttons = (changes) => {
+            // Use strict equality as changes can not contains changes on the
+            // editing parameter
+            if (changes.editing === true) {
+                setcenter_button.classList.remove("hidden");
+                setzoom_button.classList.remove("hidden");
+                setcenterzoom_button.classList.remove("hidden");
+            } else if (changes.editing === false) {
+                setcenter_button.classList.add("hidden");
+                setzoom_button.classList.add("hidden");
+                setcenterzoom_button.classList.add("hidden");
+            }
+        };
+        MashupPlatform.mashup.context.registerCallback(update_ui_buttons);
+        update_ui_buttons({editing: MashupPlatform.mashup.context.get("editing")});
     }
 
     MapLibre.prototype.addLayer = function addLayer(command_info) {
