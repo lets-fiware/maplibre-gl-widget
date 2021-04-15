@@ -158,7 +158,7 @@
         this.map.on('mouseleave', (event) => {
         });
 
-        // Port of https://github.com/Wirecloud/ol3-map-widget
+        // Porting of https://github.com/Wirecloud/ol3-map-widget
         // Set position button
         const setcenter_button = document.getElementById('setcenter-button');
         setcenter_button.addEventListener('click', (event) => {
@@ -381,30 +381,39 @@
     }
 
     const updateNavigationControl = function updateNavigationControl() {
-        if (MashupPlatform.prefs.get('navigationControl')) {
-            this.naviControl = new maplibregl.NavigationControl()
-            this.map.addControl(this.naviControl);
-        } else {
+        if (this.naviControl != null) {
             this.map.removeControl(this.naviControl);
             this.naviControl = null;
+        }
+        const value = MashupPlatform.prefs.get('navigationControl');
+        if (value != 'off') {
+            this.naviControl = new maplibregl.NavigationControl()
+            this.map.addControl(this.naviControl, value);
         }
     }
 
     const updateScaleControl = function updateScaleControl() {
-        if (MashupPlatform.prefs.get('scaleControl')) {
+        if (this.scaleControl != null) {
+            this.map.removeControl(this.scaleControl);
+            this.scaleControl = null;
+        }
+        const value = MashupPlatform.prefs.get('scaleControl');
+        if (value != 'off') {
             this.scaleControl = new maplibregl.ScaleControl({
                 maxWidth: 200,
                 unit: 'metric'
             });
-            this.map.addControl(this.scaleControl);
-        } else {
-            this.map.removeControl(this.scaleControl);
-            this.scaleControl = null;
+            this.map.addControl(this.scaleControl, value);
         }
     }
 
     const updateGeolocateControl = function updateGeolocateControl() {
-        if (MashupPlatform.prefs.get('geolocateControl')) {
+        if (this.geolocateControl != null) {
+            this.map.removeControl(this.geolocateControl);
+            this.geolocateControl = null;
+        }
+        const value = MashupPlatform.prefs.get('geolocateControl');
+        if (value != 'off') {
             this.geolocateControl = new maplibregl.GeolocateControl({
                 positionOptions: {
                     enableHighAccuracy: false
@@ -413,10 +422,7 @@
                 trackUserLocation: true,
                 showUserLocation: true
             });
-            this.map.addControl(this.geolocateControl);
-        } else {
-            this.map.removeControl(this.geolocateControl);
-            this.geolocateControl = null;
+            this.map.addControl(this.geolocateControl, value);
         }
     }
 
@@ -431,12 +437,14 @@
     }
 
     const updateFullscreenControl = function updateFullscreenControl() {
-        if (MashupPlatform.prefs.get('fullscreenControl')) {
-            this.fullscreenControl = new maplibregl.FullscreenControl();
-            this.map.addControl(this.fullscreenControl);
-        } else {
+        if (this.fullscreenControl != null) {
             this.map.removeControl(this.fullscreenControl);
             this.fullscreenControl = null;
+        }
+        const value = MashupPlatform.prefs.get('fullscreenControl');
+        if (value != 'off') {
+            this.fullscreenControl = new maplibregl.FullscreenControl();
+            this.map.addControl(this.fullscreenControl);
         }
     }
 
