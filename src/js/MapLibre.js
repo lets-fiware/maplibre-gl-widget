@@ -25,6 +25,7 @@
         this.scaleControl = null;
         this.geolocateControl = null;
         this.attributionControl = null;
+        this.fullscreenControl = null;
         this.animating = false;
         this.waiting = false;
         this.debug = MashupPlatform.prefs.get('debug');
@@ -66,6 +67,9 @@
             if (new_preferences.hasOwnProperty('attributionControl')) {
                 updateAttributionControl.call(this)
             }
+            if (new_preferences.hasOwnProperty('fullscreenControl')) {
+                updateFullscreenControl.call(this)
+            }
             if (new_preferences.hasOwnProperty('debug')) {
                 this.debug = MashupPlatform.prefs.get('debug');
             }
@@ -105,6 +109,10 @@
 
         if (MashupPlatform.prefs.get('geolocateControl')) {
             updateGeolocateControl.call(this);
+        }
+
+        if (MashupPlatform.prefs.get('fullscreenControl')) {
+            updateFullscreenControl.call(this);
         }
 
         updateAttributionControl.call(this)
@@ -420,6 +428,16 @@
             compact: MashupPlatform.prefs.get('attributionControl')
         });
         this.map.addControl(this.attributionControl);
+    }
+
+    const updateFullscreenControl = function updateFullscreenControl() {
+        if (MashupPlatform.prefs.get('fullscreenControl')) {
+            this.fullscreenControl = new maplibregl.FullscreenControl();
+            this.map.addControl(this.fullscreenControl);
+        } else {
+            this.map.removeControl(this.fullscreenControl);
+            this.fullscreenControl = null;
+        }
     }
 
     const build_marker = function build_marker(icon) {

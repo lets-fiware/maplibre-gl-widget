@@ -1,5 +1,6 @@
 ## MapLibre GL widget v0.x.x
 
+- Add fullscreen control option
 - Add a button for setting the current pitch as the **Initial Pitch** setting. 
   This button is only available when using WireCloud v1.4 in edit mode.
 - Add a button for setting the current zoom level as the **Initial Zoom
