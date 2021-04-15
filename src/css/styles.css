@@ -2,11 +2,14 @@ html,
 body {
   margin: 0;
   padding: 0;
+  width: 100%;
 }
 
-.map {
-  width: 100vw;
-  height: 100vh;
+#map {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
 }
 
 .marker {
@@ -50,4 +53,21 @@ body {
 .trans span {
   transform-origin:0 0;
   transform: rotateZ(-135deg);
+}
+
+#buttons {
+    top: 5px;
+    right: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#container {
+  position: absolute;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  top: 42px;
 }

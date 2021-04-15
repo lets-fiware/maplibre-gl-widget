@@ -15,13 +15,9 @@
     // =========================================================================
     // CLASS DEFINITION
     // =========================================================================
-    var map;
-    var PoIs = {};
-    var debug = false;
-    var aniFrame = false;
-    var waiting = false;
 
-    var MapLibre = function MapLibre() {
+    const MapLibre = function MapLibre() {
+        this.pois = {};
         this.queue = [];
         this.executingCmd = "";
         this.hoveredStateId = null;
@@ -29,31 +25,35 @@
         this.scaleControl = null;
         this.geolocateControl = null;
         this.attributionControl = null;
+        this.fullscreenControl = null;
+        this.animating = false;
+        this.waiting = false;
+        this.debug = MashupPlatform.prefs.get('debug');
 
         MashupPlatform.prefs.registerCallback(function (new_preferences) {
             if (new_preferences.hasOwnProperty('initialCenter')) {
-                map.setCenter(MashupPlatform.prefs.get('initialCenter').split(','));
+                this.map.setCenter(MashupPlatform.prefs.get('initialCenter').split(','));
             }
             if (new_preferences.hasOwnProperty('initialZoom')) {
-                map.setZoom(MashupPlatform.prefs.get('initialZoom'));
+                this.map.setZoom(MashupPlatform.prefs.get('initialZoom'));
             }
             if (new_preferences.hasOwnProperty('initialPitch')) {
-                map.setPitch(MashupPlatform.prefs.get('initialPitch'));
+                this.map.setPitch(MashupPlatform.prefs.get('initialPitch'));
             }
             if (new_preferences.hasOwnProperty('mapStyle') || new_preferences.hasOwnProperty('customStyle')) {
-                map.setStyle(getBaseStyle());
+                this.map.setStyle(getBaseStyle());
             }
             if (new_preferences.hasOwnProperty('minzoom')) {
-                map.setMinZoom(MashupPlatform.prefs.get('minzoom'));
+                this.map.setMinZoom(MashupPlatform.prefs.get('minzoom'));
             }
             if (new_preferences.hasOwnProperty('maxzoom')) {
-                map.setMaxZoom(MashupPlatform.prefs.get('maxzoom'));
+                this.map.setMaxZoom(MashupPlatform.prefs.get('maxzoom'));
             }
             if (new_preferences.hasOwnProperty('minpitch')) {
-                map.setMinPitch(MashupPlatform.prefs.get('minpitch'));
+                this.map.setMinPitch(MashupPlatform.prefs.get('minpitch'));
             }
             if (new_preferences.hasOwnProperty('maxpitch')) {
-                map.setMaxPitch(MashupPlatform.prefs.get('maxpitch'));
+                this.map.setMaxPitch(MashupPlatform.prefs.get('maxpitch'));
             }
             if (new_preferences.hasOwnProperty('navigationControl')) {
                 updateNavigationControl.call(this)
@@ -67,12 +67,15 @@
             if (new_preferences.hasOwnProperty('attributionControl')) {
                 updateAttributionControl.call(this)
             }
+            if (new_preferences.hasOwnProperty('fullscreenControl')) {
+                updateFullscreenControl.call(this)
+            }
             if (new_preferences.hasOwnProperty('debug')) {
-                debug = MashupPlatform.prefs.get('debug');
+                this.debug = MashupPlatform.prefs.get('debug');
             }
 
-            waiting = false;
-            aniFrame = false;
+            this.waiting = false;
+            this.animating = false;
             this.queue = [];
             this.executingCmd = "";
         }.bind(this));
@@ -80,15 +83,12 @@
     };
 
     MapLibre.prototype.init = function init() {
-
-        debug = MashupPlatform.prefs.get('debug');
-
-        var initialCenter = MashupPlatform.prefs.get("initialCenter").split(",").map(Number);
+        let initialCenter = MashupPlatform.prefs.get('initialCenter').split(',').map(Number);
         if (initialCenter.length != 2 || !Number.isFinite(initialCenter[0]) || !Number.isFinite(initialCenter[1])) {
             initialCenter = [0, 0];
         }
 
-        var options = {
+        const options = {
             container: 'map',
             center: initialCenter,
             zoom: parseInt(MashupPlatform.prefs.get('initialZoom'), 10),
@@ -97,7 +97,7 @@
             attributionControl: false
         };
 
-        map = new maplibregl.Map(options);
+        this.map = new maplibregl.Map(options);
 
         if (MashupPlatform.prefs.get('navigationControl')) {
             updateNavigationControl.call(this)
@@ -111,56 +111,111 @@
             updateGeolocateControl.call(this);
         }
 
+        if (MashupPlatform.prefs.get('fullscreenControl')) {
+            updateFullscreenControl.call(this);
+        }
+
         updateAttributionControl.call(this)
 
-        map.on('load', () => {
-            debug && MashupPlatform.widget.log('load', MashupPlatform.log.INFO);
+        this.map.on('load', (event) => {
+            this.debug && MashupPlatform.widget.log('load', MashupPlatform.log.INFO);
             execEnd.call(this);
         });
 
-        map.on('moveend', () => {
-            // debug && MashupPlatform.widget.log('moveend', MashupPlatform.log.INFO);
-            updatePoiList.call(this);
+        this.map.on('moveend', (event) => {
+            // this.debug && MashupPlatform.widget.log('moveend', MashupPlatform.log.INFO);
+            sendPoIList.call(this);
             execEnd.call(this);
         });
 
-        map.on('pitchend', () => {
-            debug && MashupPlatform.widget.log('pitchend', MashupPlatform.log.INFO);
+        this.map.on('pitchend', (event) => {
+            this.debug && MashupPlatform.widget.log('pitchend', MashupPlatform.log.INFO);
             // execEnd.call(this);
         });
 
-        map.on('rotateend', () => {
-            // debug && MashupPlatform.widget.log('rotateend', MashupPlatform.log.INFO);
+        this.map.on('rotateend', (event) => {
+            // this.debug && MashupPlatform.widget.log('rotateend', MashupPlatform.log.INFO);
             execEnd.call(this);
         });
 
-        map.on('zoomend', () => {
-            debug && MashupPlatform.widget.log('zoomend', MashupPlatform.log.INFO);
-            updatePoiList.call(this);
+        this.map.on('zoomend', (event) => {
+            this.debug && MashupPlatform.widget.log('zoomend', MashupPlatform.log.INFO);
+            sendPoIList.call(this);
             execEnd.call(this);
         });
 
-        map.on('render', () => {
+        this.map.on('render', (event) => {
         });
 
-        map.on('resize', () => {
-            updatePoiList.call(this);
-            debug && MashupPlatform.widget.log('resize', MashupPlatform.log.INFO);
+        this.map.on('resize', (event) => {
+            sendPoIList.call(this);
+            this.debug && MashupPlatform.widget.log('resize', MashupPlatform.log.INFO);
         });
 
-        map.on('mousemove', (e) => {
+        this.map.on('mousemove', (event) => {
         });
 
-        map.on('mouseleave', () => {
+        this.map.on('mouseleave', (event) => {
         });
+
+        // Porting of https://github.com/Wirecloud/ol3-map-widget
+        // Set position button
+        const setcenter_button = document.getElementById('setcenter-button');
+        setcenter_button.addEventListener('click', (event) => {
+            const currentCenter = this.map.getCenter();
+            MashupPlatform.prefs.set(
+                "initialCenter",
+                currentCenter.lng + ',' + currentCenter.lat
+            );
+        });
+        const setzoom_button = document.getElementById('setzoom-button');
+        setzoom_button.addEventListener('click', (event) => {
+            MashupPlatform.prefs.set(
+                'initialZoom',
+                this.map.getZoom()
+            );
+        });
+        const setpitch_button = document.getElementById('setpitch-button');
+        setpitch_button.addEventListener('click', (event) => {
+            MashupPlatform.prefs.set(
+                'initialPitch',
+                this.map.getPitch()
+            );
+        });
+        const setcenterzoom_button = document.getElementById('setcenterzoom-button');
+        setcenterzoom_button.addEventListener('click', (event) => {
+            const currentCenter = this.map.getCenter();
+            MashupPlatform.prefs.set({
+                initialCenter: currentCenter.lng + ',' + currentCenter.lat,
+                initialZoom: this.map.getZoom(),
+                initialPitch: this.map.getPitch()
+            });
+        });
+        const update_ui_buttons = (changes) => {
+            // Use strict equality as changes can not contains changes on the
+            // editing parameter
+            if (changes.editing === true) {
+                setcenter_button.classList.remove("hidden");
+                setzoom_button.classList.remove("hidden");
+                setpitch_button.classList.remove("hidden");
+                setcenterzoom_button.classList.remove("hidden");
+            } else if (changes.editing === false) {
+                setcenter_button.classList.add("hidden");
+                setzoom_button.classList.add("hidden");
+                setpitch_button.classList.add("hidden");
+                setcenterzoom_button.classList.add("hidden");
+            }
+        };
+        MashupPlatform.mashup.context.registerCallback(update_ui_buttons);
+        update_ui_buttons({editing: MashupPlatform.mashup.context.get("editing")});
     }
 
     MapLibre.prototype.addLayer = function addLayer(command_info) {
         try {
             if (command_info.source != null) {
-                map.addSource(command_info.source.name, command_info.source.data);
+                this.map.addSource(command_info.source.name, command_info.source.data);
             }
-            map.addLayer(command_info.data, command_info.beforeId);
+            this.map.addLayer(command_info.data, command_info.beforeId);
         } catch (e) {
             MashupPlatform.widget.log(e.message);
             throw new MashupPlatform.wiring.EndpointTypeError();
@@ -168,67 +223,67 @@
     }
 
     MapLibre.prototype.moveLayer = function moveLayer(command_info) {
-        map.moveLayer(command_info.id, command_info.beforeId);
+        this.map.moveLayer(command_info.id, command_info.beforeId);
     }
 
     MapLibre.prototype.removeLayer = function removeLayer(command_info) {
-        map.removeLayer(command_info.id);
+        this.map.removeLayer(command_info.id);
     }
 
     MapLibre.prototype.setBaseLayer = function setBaseLayer(command_info) {
         if (command_info.options == null) {
-            map.setStyle(command_info.style);
+            this.map.setStyle(command_info.style);
         } else {
-            map.setStyle(command_info.style, command_info.options);
+            this.map.setStyle(command_info.style, command_info.options);
         }
     }
 
     MapLibre.prototype.registerPoIs = function registerPoIs(poi_info) {
-        poi_info.forEach(poi =>registerPoI(poi));
+        poi_info.forEach(poi =>registerPoI.call(this, poi));
+        sendPoIList.call(this);
     }
 
     MapLibre.prototype.replacePoIs = function replacePoIs(poi_info) {
-        for (var key in PoIs) {
-            PoIs[key].remove();
+        for (let key in this.pois) {
+            this.pois[key].remove();
         };
-        PoIs = {};
-        poi_info.forEach(poi =>registerPoI(poi));
-        updatePoiList.call(this);
+        this.pois = {};
+        poi_info.forEach(poi =>registerPoI.call(this, poi));
+        sendPoIList.call(this);
     }
 
     MapLibre.prototype.centerPoI = function centerPoI(poi_info) {
         if (poi_info.length) {
-            poi_info.forEach(poi =>registerPoI(poi));
-            map.setCenter(poi_info[poi_info.length - 1].location.coordinates);
-            updatePoiList.call(this);
+            poi_info.forEach(poi =>registerPoI.call(this, poi));
+            this.map.setCenter(poi_info[poi_info.length - 1].location.coordinates);
+            sendPoIList.call(this);
         }
     }
 
     MapLibre.prototype.removePoIs = function removePoIs(poi_info) {
-        for (var key in PoIs) {
-            PoIs[key].remove();
-            delete PoIs[key];
+        for (let key in this.pois) {
+            this.pois[key].remove();
+            delete this.pois[key];
         };
     }
 
-    var registerPoI = function registerPoI(poi_info) {
-
+    const registerPoI = function registerPoI(poi_info) {
         if (poi_info.location.type == "Point") {
-            var poi = PoIs[poi_info.id];
+            let poi = this.pois[poi_info.id];
 
-            var el = ('icon' in poi_info)
+            let el = ('icon' in poi_info)
                 ? build_marker(poi_info.icon)
                 : build_marker_webfont(poi_info);
 
             if (poi == null) {
-                poi = new maplibregl.Marker(el).setLngLat(poi_info.location.coordinates).addTo(map);
+                poi = new maplibregl.Marker(el).setLngLat(poi_info.location.coordinates).addTo(this.map);
             } else {
                 poi.setLngLat(poi_info.location.coordinates);
             }
 
             // Add popup
             if (poi_info.title || poi_info.infoWindow) {
-                var popup = new maplibregl.Popup({ offset: 25 }).setHTML("<b>" + poi_info.title + "</b><br>" + poi_info.infoWindow);
+                let popup = new maplibregl.Popup({ offset: 25 }).setHTML("<b>" + poi_info.title + "</b><br>" + poi_info.infoWindow);
                 popup.on('close', () => {
                     if (MashupPlatform.widget.outputs.poiOutput.connected) {
                         MashupPlatform.widget.outputs.poiOutput.pushEvent(null);
@@ -243,10 +298,10 @@
             // bind event to send function
             el.addEventListener("click", sendSelectedPoI.bind(poi));
 
-            PoIs[poi_info.id] = poi;
+            this.pois[poi_info.id] = poi;
 
         } else if (poi_info.location.type == "LineString") {
-            map.addSource(poi_info.id, {
+            this.map.addSource(poi_info.id, {
                 'type': 'geojson',
                 'data': {
                     'type': 'Feature',
@@ -257,7 +312,7 @@
                     }
                 }
             });
-            map.addLayer({
+            this.map.addLayer({
                 'id': poi_info.id,
                 'type': 'line',
                 'source': poi_info.id,
@@ -271,7 +326,7 @@
                 }
             });
         } else if (poi_info.location.type == 'Polygon') {
-            map.addSource(poi_info.id, {
+            this.map.addSource(poi_info.id, {
                 'type': 'geojson',
                 'data': {
                     'type': 'Feature',
@@ -282,7 +337,7 @@
                     }
                 }
             });
-            map.addLayer({
+            this.map.addLayer({
                 'id': poi_info.id,
                 'type': 'fill',
                 'source': poi_info.id,
@@ -293,7 +348,6 @@
                 }
             });
         }
-        updatePoiList.call(this);
     }
 
     MapLibre.prototype.execCommands = function (commands) {
@@ -303,7 +357,7 @@
     // =========================================================================
     // PRIVATE MEMBERS
     // =========================================================================
-    var mapStyles = {
+    const mapStyles = {
         'OSM': 'map/osm.json',
         'GSI_STD': 'map/gsi/std.json',
         'GSI_STD_VERTICAL': 'map/gsi/std_vertical.json',
@@ -314,43 +368,52 @@
         'GSI_BUILDING3D_PHOTO': 'map/gsi/building3dphoto.json'
     };
 
-    var getBaseStyle = function getBaseStyle() {
-        var style = MashupPlatform.prefs.get('mapStyle');
+    const getBaseStyle = function getBaseStyle() {
+        let style = MashupPlatform.prefs.get('mapStyle');
 
         if (style == 'CUSTOM_STYLE') {
             style = MashupPlatform.prefs.get('customStyle');
         } else {
-            var url = new URL(mapStyles[style], location.href)
+            const url = new URL(mapStyles[style], location.href)
             style = url.href
         }
         return style
     }
 
-    var updateNavigationControl = function updateNavigationControl() {
-        if (MashupPlatform.prefs.get('navigationControl')) {
-            this.naviControl = new maplibregl.NavigationControl()
-            map.addControl(this.naviControl);
-        } else {
-            map.removeControl(this.naviControl);
+    const updateNavigationControl = function updateNavigationControl() {
+        if (this.naviControl != null) {
+            this.map.removeControl(this.naviControl);
             this.naviControl = null;
+        }
+        const value = MashupPlatform.prefs.get('navigationControl');
+        if (value != 'off') {
+            this.naviControl = new maplibregl.NavigationControl()
+            this.map.addControl(this.naviControl, value);
         }
     }
 
-    var updateScaleControl = function updateScaleControl() {
-        if (MashupPlatform.prefs.get('scaleControl')) {
+    const updateScaleControl = function updateScaleControl() {
+        if (this.scaleControl != null) {
+            this.map.removeControl(this.scaleControl);
+            this.scaleControl = null;
+        }
+        const value = MashupPlatform.prefs.get('scaleControl');
+        if (value != 'off') {
             this.scaleControl = new maplibregl.ScaleControl({
                 maxWidth: 200,
                 unit: 'metric'
             });
-            map.addControl(this.scaleControl);
-        } else {
-            map.removeControl(this.scaleControl);
-            this.scaleControl = null;
+            this.map.addControl(this.scaleControl, value);
         }
     }
 
-    var updateGeolocateControl = function updateGeolocateControl() {
-        if (MashupPlatform.prefs.get('geolocateControl')) {
+    const updateGeolocateControl = function updateGeolocateControl() {
+        if (this.geolocateControl != null) {
+            this.map.removeControl(this.geolocateControl);
+            this.geolocateControl = null;
+        }
+        const value = MashupPlatform.prefs.get('geolocateControl');
+        if (value != 'off') {
             this.geolocateControl = new maplibregl.GeolocateControl({
                 positionOptions: {
                     enableHighAccuracy: false
@@ -359,26 +422,35 @@
                 trackUserLocation: true,
                 showUserLocation: true
             });
-            map.addControl(this.geolocateControl);
-        } else {
-            map.removeControl(this.geolocateControl);
-            this.geolocateControl = null;
+            this.map.addControl(this.geolocateControl, value);
         }
     }
 
-    var updateAttributionControl = function updateAttributionControl() {
+    const updateAttributionControl = function updateAttributionControl() {
         if (this.attributionControl != null) {
-            map.removeControl(this.attributionControl);
+            this.map.removeControl(this.attributionControl);
         }
         this.attributionControl = new maplibregl.AttributionControl({
             compact: MashupPlatform.prefs.get('attributionControl')
         });
-        map.addControl(this.attributionControl);
+        this.map.addControl(this.attributionControl);
     }
 
-    var build_marker = function build_marker(icon) {
-        var url = (typeof icon === 'string') ? icon : icon.src;
-        var el = document.createElement('div');
+    const updateFullscreenControl = function updateFullscreenControl() {
+        if (this.fullscreenControl != null) {
+            this.map.removeControl(this.fullscreenControl);
+            this.fullscreenControl = null;
+        }
+        const value = MashupPlatform.prefs.get('fullscreenControl');
+        if (value != 'off') {
+            this.fullscreenControl = new maplibregl.FullscreenControl();
+            this.map.addControl(this.fullscreenControl);
+        }
+    }
+
+    const build_marker = function build_marker(icon) {
+        const url = (typeof icon === 'string') ? icon : icon.src;
+        let el = document.createElement('div');
         el.className = 'marker';
         el.style.backgroundImage = 'url(' + url + ')';
         el.style.backgroundRepeat = 'no-repeat';
@@ -389,8 +461,8 @@
         return el;
     }
 
-    var build_marker_webfont = function build_marker_webfont(poi_info) {
-        var font = 'se-icon fa fa-star';
+    const build_marker_webfont = function build_marker_webfont(poi_info) {
+        let font = 'se-icon fa fa-star';
 
         if ('style' in poi_info) {
             if ('fontSymbol' in poi_info.style && 'glyph' in poi_info.style.fontSymbol) {
@@ -403,15 +475,16 @@
             poi_info.style = {};
         }
 
-        var style = poi_info.style;
+        let style = poi_info.style;
+        let el;
 
         if ('fontSymbol' in style) {
-            var fontSymbol = poi_info.style.fontSymbol;
-            var i = document.createElement('i');
+            let fontSymbol = poi_info.style.fontSymbol;
+            let i = document.createElement('i');
             i.className = font;
             i.style.fontSize = fontSymbol.fontSize || '';
 
-            var span = document.createElement('span');
+            let span = document.createElement('span');
             span.append(i);
             span.style.display = 'flex';
             span.style.justifyContent = 'center';
@@ -444,11 +517,11 @@
                 break;
             }
 
-            var el = document.createElement('div');
+            el = document.createElement('div');
             el.append(span);
 
         } else {
-            var el = document.createElement('div');
+            el = document.createElement('div');
             el.innerHTML = '<span><i class="' + font + '"></i></span>';
             el.className = 'marker2';
         }
@@ -456,7 +529,7 @@
         return el;
     }
 
-    var colorTable = {
+    const colorTable = {
         transparent: '',
         white: '#ffffff',
         silver: '#c0c0c0',
@@ -483,7 +556,7 @@
         'fi-red': '#d36b59',
     }
 
-    var getColorCode = function getColorCode(color, defaultColor) {
+    const getColorCode = function getColorCode(color, defaultColor) {
         if (color != null) {
             color = color.toLowerCase();
             if (color.substr(0, 1) == '#') {
@@ -495,18 +568,18 @@
         return defaultColor;
     }
 
-    var sendSelectedPoI = function sendSelectedPoI() {
+    const sendSelectedPoI = function sendSelectedPoI() {
         if (MashupPlatform.widget.outputs.poiOutput.connected) {
             MashupPlatform.widget.outputs.poiOutput.pushEvent(this.data);
         }
     }
 
-    var updatePoiList = function updatePoiList() {
+    const sendPoIList = function sendPoIList() {
         if (MashupPlatform.widget.outputs.poiListOutput.connected) {
-            var bounds = map.getBounds();
-            var poiList = [];
-            for (var key in PoIs) {
-                var poi = PoIs[key];
+            let bounds = this.map.getBounds();
+            let poiList = [];
+            for (let key in this.pois) {
+                let poi = this.pois[key];
                 if (!poi.hasOwnProperty('__lnglat')) {
                     poi.__lnglat = new maplibregl.LngLat(poi.data.location.coordinates[0], poi.data.location.coordinates[1]);
                 }
@@ -518,8 +591,8 @@
         }
     }
 
-    var _execCommands = function _execCommands(commands, _executingCmd) {
-        if (!waiting) {
+    const _execCommands = function _execCommands(commands, _executingCmd) {
+        if (!this.waiting) {
             this.executingCmd = _executingCmd;
             if (!Array.isArray(commands)) {
                 commands = [commands];
@@ -527,7 +600,7 @@
             this.queue = this.queue.concat(commands);
 
             if (this.executingCmd == "" && this.queue.length > 0) {
-                var cmd = this.queue.shift();
+                let cmd = this.queue.shift();
                 if (!cmd.hasOwnProperty('value')) {
                     cmd.value = {}
                 }
@@ -535,51 +608,51 @@
                 commandList[this.executingCmd].call(this, cmd.value);
             }
         }
-        debug && MashupPlatform.widget.log(`exec: ${this.executingCmd}, queue: ${this.queue.length}`, MashupPlatform.log.INFO);
+        this.debug && MashupPlatform.widget.log(`exec: ${this.executingCmd}, queue: ${this.queue.length}`, MashupPlatform.log.INFO);
     }
 
-    var execEnd = function execEnd() {
+    const execEnd = function execEnd() {
         setTimeout(() => {
             _execCommands.call(this, [], "");
         }, 0);
     };
 
-    var commandList = {
+    const commandList = {
         'add3dtiles': function (value) {
             const tiles = new Mapbox3DTiles.Layer(value.data)
-            map.addLayer(tiles);
+            this.map.addLayer(tiles);
             execEnd.call(this);
         },
         'addlayer': function (value) {
             if (value.source != null) {
-                map.addSource(value.source.name, value.source.data);
+                this.map.addSource(value.source.name, value.source.data);
             }
-            map.addLayer(value.data, value.beforeId);
+            this.map.addLayer(value.data, value.beforeId);
             execEnd.call(this);
         },
         'movelayer': function (value) {
-            map.moveLayer(value.id, value.beforeId);
+            this.map.moveLayer(value.id, value.beforeId);
             execEnd.call(this);
         },
         'removelayer': function (value) {
-            map.removeLayer(value.id);
+            this.map.removeLayer(value.id);
             execEnd.call(this);
         },
         'setbaselayer': function (value) {
-            map.setStyle(value.style, value.options);
+            this.map.setStyle(value.style, value.options);
             execEnd.call(this);
         },
         'rotatecamera': function (value) {
-            if (!aniFrame) {
-                aniFrame = true
-                var rotateCamera = function rotateCamera(value) {
-                    if (aniFrame) {
+            if (!this.animating) {
+                this.animating = true
+                let rotateCamera = function rotateCamera(value) {
+                    if (this.animating) {
                         if (typeof value === 'number') {
                             // clamp the rotation between 0 -360 degrees
                             // Divide timestamp by 100 to slow rotation to ~10 degrees / sec
-                            map.rotateTo((value / 100) % 360, { duration: 0 });
+                            this.map.rotateTo((value / 100) % 360, { duration: 0 });
                         } else {
-                            map.rotateTo(value.bearing, value.options);
+                            this.map.rotateTo(value.bearing, value.options);
                         }
                         // Request the next frame of the animation.
                         requestAnimationFrame(rotateCamera);
@@ -590,44 +663,44 @@
             execEnd.call(this);
         },
         'stopcamera': function (value) {
-            aniFrame = false
+            this.animating = false
             execEnd.call(this);
         },
         'attributioncontrol': function (value) {
-            map.addControl(new maplibregl.AttributionControl(value));
+            this.map.addControl(new maplibregl.AttributionControl(value));
             execEnd.call(this);
         },
         'setcenter': function (value) {
-            map.setCenter(value);
+            this.map.setCenter(value);
         },
         'setpaintproperty': function (value) {
-            map.setPaintProperty(value.LayerId, value.name, value.value);
+            this.map.setPaintProperty(value.LayerId, value.name, value.value);
             execEnd.call(this);
         },
         'panto': function (value) { // moveend
-            map.panTo(value);
+            this.map.panTo(value);
         },
         'flyto': function (value) { // moveend
-            map.flyTo(value);
+            this.map.flyTo(value);
         },
         'setzoom': function (value) { // moveend
-            map.setZoom(value);
+            this.map.setZoom(value);
         },
         'setpitch': function (value) { // pitchend
             setTimeout(() => {
-                map.setPitch(value);
+                this.map.setPitch(value);
             }, 0);
         },
         'reset': function (value) {
-            waiting = false;
-            aniFrame = false;
+            this.waiting = false;
+            this.animating = false;
             this.queue = [];
             this.executingCmd = "";
         },
         'wait': function (value) {
-            waiting = true;
+            this.waiting = true;
             setTimeout(() => {
-                waiting = false;
+                this.waiting = false;
                 _execCommands.call(this, [], "");
             }, value * 1000);
         },
