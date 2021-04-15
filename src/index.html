@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html style='width: 100%;'>
+<html>
     <head>
         <meta charset="utf-8" />
         <link rel="stylesheet" type="text/css" href="css/styles.css" />
@@ -10,15 +10,16 @@
         <script src="lib/mapbox-3dtiles/Mapbox3DTiles.js"></script>
         <title>MapLibre GL widget</title>
     </head>
-    <body style='width: 100%;'>
-        <div id='map' style='width: 100%; position: absolute; top: 0; bottom: 0;'></div>
-        <div id="info" class="container"></div>
-        <div id="buttons">
-            <div id="button" class="se-btn fade"><i class="fas fa-layer-group"></i></div>
-            <div class="btn-group">
-                <div id="setcenter-button" class="se-btn hidden" title="Set initial location"><i class="fa-fw fas fa-crosshairs"></i></div>
-                <div id="setzoom-button" class="se-btn hidden" title="Set initial zoom level"><i class="fa-fw fas fa-ruler"></i></div>
-                <div id="setcenterzoom-button" class="se-btn hidden" title="Set initial location and zoom level"><i class="fa-fw fas fa-expand"></i></div>
+    <body>
+        <div id="map"></div>
+        <div id="container">
+            <div id="buttons">
+                <div class="btn-group">
+                    <div id="setcenter-button" class="se-btn hidden" title="Set initial location"><i class="fa-fw fas fa-crosshairs"></i></div>
+                    <div id="setzoom-button" class="se-btn hidden" title="Set initial zoom level"><i class="fa-fw fas fa-ruler"></i></div>
+                    <div id="setpitch-button" class="se-btn hidden" title="Set initial pitch"><i class="fa-fw fas fa-solar-panel"></i></div>
+                    <div id="setcenterzoom-button" class="se-btn hidden" title="Set initial location, zoom level and pitch"><i class="fa-fw fas fa-expand"></i></div>
+                </div>
             </div>
         </div>
         <script type="text/javascript" src="js/MapLibre.js"></script>

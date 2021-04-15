@@ -171,12 +171,20 @@
                 map.getZoom()
             );
         });
+        const setpitch_button = document.getElementById('setpitch-button');
+        setpitch_button.addEventListener('click', (event) => {
+            MashupPlatform.prefs.set(
+                'initialPitch',
+                map.getPitch()
+            );
+        });
         const setcenterzoom_button = document.getElementById('setcenterzoom-button');
         setcenterzoom_button.addEventListener('click', (event) => {
             const currentCenter = map.getCenter();
             MashupPlatform.prefs.set({
                 initialCenter: currentCenter.lng + ',' + currentCenter.lat,
-                initialZoom: map.getZoom()
+                initialZoom: map.getZoom(),
+                initialPitch: map.getPitch()
             });
         });
         const update_ui_buttons = (changes) => {
@@ -185,10 +193,12 @@
             if (changes.editing === true) {
                 setcenter_button.classList.remove("hidden");
                 setzoom_button.classList.remove("hidden");
+                setpitch_button.classList.remove("hidden");
                 setcenterzoom_button.classList.remove("hidden");
             } else if (changes.editing === false) {
                 setcenter_button.classList.add("hidden");
                 setzoom_button.classList.add("hidden");
+                setpitch_button.classList.add("hidden");
                 setcenterzoom_button.classList.add("hidden");
             }
         };
