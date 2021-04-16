@@ -1,6 +1,6 @@
-## MapLibre GL widget v0.x.x
+## MapLibre GL widget v0.3.0 2021/4/16
 
-- Improve initial center
+- Improve initial center (#6)
 - Add control position setting (#5)
 - Add fullscreen control option (#5)
 - Add a button for setting the current pitch as the **Initial Pitch** setting. 
