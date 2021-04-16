@@ -1,5 +1,6 @@
 ## v0.x.x
 
+- Improve initial center
 - Add control position setting
 - Add fullscreen control option
 - Add a button for setting the current pitch as the **Initial Pitch** setting.
