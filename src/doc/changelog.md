@@ -1,4 +1,4 @@
-## v0.x.x
+## v0.3.0
 
 - Improve initial center
 - Add control position setting
