@@ -85,7 +85,11 @@
     MapLibre.prototype.init = function init() {
         let initialCenter = MashupPlatform.prefs.get('initialCenter').split(',').map(Number);
         if (initialCenter.length != 2 || !Number.isFinite(initialCenter[0]) || !Number.isFinite(initialCenter[1])) {
-            initialCenter = [0, 0];
+            if (MashupPlatform.context.get('language') == 'ja') {
+                initialCenter = [135,35];
+            } else {
+                initialCenter = [-3.7,40.4];
+            }
         }
 
         const options = {
