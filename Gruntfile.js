@@ -67,6 +67,7 @@ module.exports = function (grunt) {
                     {expand: true, cwd: 'node_modules/maplibre-gl', src: 'README.md', dest: 'build/lib/lib/maplibre-gl/'},
                     {expand: true, cwd: 'node_modules/maplibre-gl', src: 'LICENSE.txt', dest: 'build/lib/lib/maplibre-gl/'},
                     {expand: true, cwd: 'node_modules/three/build', src: 'three.min.js', dest: 'build/lib/lib/js/'},
+                    {expand: true, cwd: 'node_modules/@turf/turf', src: 'turf.min.js', dest: 'build/lib/lib/js/'},
                     {expand: true, cwd: 'node_modules/three/examples/js/loaders', src: 'GLTFLoader.js', dest: 'build/lib/lib/js/'}
                 ]
             },
