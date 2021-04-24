@@ -277,8 +277,12 @@
             if (poi.location.type != 'Point') {
                 const feature = this.geojsonSource.features.find(e => e.id == poi.id);
                 coord = turf.center(feature).geometry.coordinates;
+                const box = turf.envelope({"type": "FeatureCollection", "features": [feature]}).bbox;
+                const bounds = new maplibregl.LngLatBounds([box[0], box[1]], [box[2], box[3]]);
+                this.map.fitBounds(bounds, { padding: 20 });
+            } else {
+                this.map.setCenter(coord);
             }
-            this.map.setCenter(coord);
             updateGeojsonSource.call(this);
             sendPoIList.call(this);
         }
@@ -686,7 +690,7 @@
             let poiList = [];
             for (let key in this.pois) {
                 let poi = this.pois[key];
-                if (poi.location != null && poi.location.type == 'Point') {
+                if (poi.data.location != null && poi.data.location.type == 'Point') {
                     if (!poi.hasOwnProperty('__lnglat')) {
                         poi.__lnglat = new maplibregl.LngLat(poi.data.location.coordinates[0], poi.data.location.coordinates[1]);
                     }
@@ -695,7 +699,7 @@
                     }
                 } else {
                     const feature = this.geojsonSource.features.find(e => e.id == poi.data.id);
-                    if (turf.booleanIntersects(feature, polygon)) {
+                    if (feature != null && turf.booleanIntersects(feature, polygon)) {
                         poiList.push(poi.data);
                     }
                 }
