@@ -1,4 +1,4 @@
-## v0.x.0
+## v0.4.0
 
 - Refactoring
 - Fit to bounds of feature by zooming when centering
