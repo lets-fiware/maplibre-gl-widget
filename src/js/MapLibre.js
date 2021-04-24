@@ -419,7 +419,7 @@
             type: 'circle',
             source: 'feature-collection',
             paint: {
-                'circle-color': ['get', 'width'],
+                'circle-color': ['get', 'color'],
                 'circle-radius': ['get', 'radius']
             },
             'filter': ['==', '$type', 'Point']
