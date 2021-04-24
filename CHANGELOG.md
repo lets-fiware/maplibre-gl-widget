@@ -1,11 +1,11 @@
-## MapLibre GL widget v0.x.0
+## MapLibre GL widget v0.4.0 - April 25, 2021
 
-- Refactoring
+- Refactoring (#12)
 - Fit to bounds of feature by zooming when centering (#11)
 - Fix build error (#10)
 - Support PoIs with lines or polygons (#9)
 
-## MapLibre GL widget v0.3.0 2021/4/16
+## MapLibre GL widget v0.3.0 - April 16, 2021
 
 - Improve initial center (#6)
 - Add control position setting (#5)
@@ -26,7 +26,7 @@
 - Add Visible PoIs feature (#5)
 - Fix PoI selected (#5)
 
-## MapLibre GL widget v0.2.0 - 2021/4/11
+## MapLibre GL widget v0.2.0- April 11, 2021
 
 - Add catalogue icon (#4)
 - Fix removePoI error (#3)
@@ -39,6 +39,6 @@
 - Add map styles (#2)
 - Add contribution guideline (#1)
 
-## MapLibre GL widget v0.1.0 - 2021/4/9
+## MapLibre GL widget v0.1.0- April 9, 2021
 
 - Initial release
