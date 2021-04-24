@@ -6,7 +6,7 @@
  * Licensed under the 3-Clause BSD License
  */
 
-/* globals maplibregl, Mapbox3DTiles */
+/* globals maplibregl, Mapbox3DTiles, turf */
 
 (function () {
 
@@ -18,8 +18,9 @@
 
     const MapLibre = function MapLibre() {
         this.pois = {};
+        this.geoUpdated = false;
         this.queue = [];
-        this.executingCmd = "";
+        this.executingCmd = '';
         this.hoveredStateId = null;
         this.naviControl = null;
         this.scaleControl = null;
@@ -29,6 +30,10 @@
         this.animating = false;
         this.waiting = false;
         this.debug = MashupPlatform.prefs.get('debug');
+        this.geojsonSource = {
+            type: 'FeatureCollection',
+            features: []
+        }
 
         MashupPlatform.prefs.registerCallback(function (new_preferences) {
             if (new_preferences.hasOwnProperty('initialCenter')) {
@@ -77,7 +82,7 @@
             this.waiting = false;
             this.animating = false;
             this.queue = [];
-            this.executingCmd = "";
+            this.executingCmd = '';
         }.bind(this));
 
     };
@@ -122,6 +127,7 @@
         updateAttributionControl.call(this)
 
         this.map.on('load', (event) => {
+            createGeojsonLayer.call(this);
             this.debug && MashupPlatform.widget.log('load', MashupPlatform.log.INFO);
             execEnd.call(this);
         });
@@ -168,7 +174,7 @@
         setcenter_button.addEventListener('click', (event) => {
             const currentCenter = this.map.getCenter();
             MashupPlatform.prefs.set(
-                "initialCenter",
+                'initialCenter',
                 currentCenter.lng + ',' + currentCenter.lat
             );
         });
@@ -199,19 +205,19 @@
             // Use strict equality as changes can not contains changes on the
             // editing parameter
             if (changes.editing === true) {
-                setcenter_button.classList.remove("hidden");
-                setzoom_button.classList.remove("hidden");
-                setpitch_button.classList.remove("hidden");
-                setcenterzoom_button.classList.remove("hidden");
+                setcenter_button.classList.remove('hidden');
+                setzoom_button.classList.remove('hidden');
+                setpitch_button.classList.remove('hidden');
+                setcenterzoom_button.classList.remove('hidden');
             } else if (changes.editing === false) {
-                setcenter_button.classList.add("hidden");
-                setzoom_button.classList.add("hidden");
-                setpitch_button.classList.add("hidden");
-                setcenterzoom_button.classList.add("hidden");
+                setcenter_button.classList.add('hidden');
+                setzoom_button.classList.add('hidden');
+                setpitch_button.classList.add('hidden');
+                setcenterzoom_button.classList.add('hidden');
             }
         };
         MashupPlatform.mashup.context.registerCallback(update_ui_buttons);
-        update_ui_buttons({editing: MashupPlatform.mashup.context.get("editing")});
+        update_ui_buttons({editing: MashupPlatform.mashup.context.get('editing')});
     }
 
     MapLibre.prototype.addLayer = function addLayer(command_info) {
@@ -242,37 +248,67 @@
         }
     }
 
-    MapLibre.prototype.registerPoIs = function registerPoIs(poi_info) {
-        poi_info.forEach(poi =>registerPoI.call(this, poi));
+    MapLibre.prototype.registerPoIs = function registerPoIs(pois_info) {
+        this.geoUpdated = false;
+        pois_info.forEach(poi => registerPoI.call(this, poi, true));
+        updateGeojsonSource.call(this);
         sendPoIList.call(this);
     }
 
-    MapLibre.prototype.replacePoIs = function replacePoIs(poi_info) {
+    MapLibre.prototype.replacePoIs = function replacePoIs(pois_info) {
+        this.geoUpdated = false;
         for (let key in this.pois) {
             this.pois[key].remove();
         };
         this.pois = {};
-        poi_info.forEach(poi =>registerPoI.call(this, poi));
+        this.geojsonSource.features = [];
+        this.map.getSource('feature-collection').setData(this.geojsonSource)
+        pois_info.forEach(poi => registerPoI.call(this, poi, false));
+        updateGeojsonSource.call(this);
         sendPoIList.call(this);
     }
 
     MapLibre.prototype.centerPoI = function centerPoI(poi_info) {
         if (poi_info.length) {
-            poi_info.forEach(poi =>registerPoI.call(this, poi));
-            this.map.setCenter(poi_info[poi_info.length - 1].location.coordinates);
+            this.geoUpdated = false;
+            poi_info.forEach(poi => registerPoI.call(this, poi, true));
+            const poi = poi_info[poi_info.length - 1];
+            let coord = poi.location.coordinates;
+            if (poi.location.type != 'Point') {
+                const feature = this.geojsonSource.features.find(e => e.id == poi.id);
+                coord = turf.center(feature).geometry.coordinates;
+            }
+            this.map.setCenter(coord);
+            updateGeojsonSource.call(this);
             sendPoIList.call(this);
         }
     }
 
-    MapLibre.prototype.removePoIs = function removePoIs(poi_info) {
-        for (let key in this.pois) {
-            this.pois[key].remove();
-            delete this.pois[key];
-        };
+    MapLibre.prototype.removePoIs = function removePoIs(pois_info) {
+        let updated = false;
+        pois_info.forEach(poi => {
+            const p = this.pois[poi.id];
+            if (p == null) {
+                return;
+            }
+            if (p.data.location.type == 'Point') {
+                this.pois[poi.id].remove();
+            } else {
+                const index = this.geojsonSource.features.findIndex(e => e.id == poi.id);
+                if (index != -1) {
+                    this.geojsonSource.features.splice(index, 1);
+                    updated = true
+                }
+            }
+            delete this.pois[poi.id];
+        });
+        if (updated) {
+            this.map.getSource('feature-collection').setData(this.geojsonSource)
+        }
     }
 
-    const registerPoI = function registerPoI(poi_info) {
-        if (poi_info.location.type == "Point") {
+    const registerPoI = function registerPoI(poi_info, update) {
+        if (poi_info.location.type == 'Point') {
             let poi = this.pois[poi_info.id];
 
             let el = ('icon' in poi_info)
@@ -287,7 +323,7 @@
 
             // Add popup
             if (poi_info.title || poi_info.infoWindow) {
-                let popup = new maplibregl.Popup({ offset: 25 }).setHTML("<b>" + poi_info.title + "</b><br>" + poi_info.infoWindow);
+                let popup = new maplibregl.Popup({ offset: 25 }).setHTML('<b>' + poi_info.title + '</b><br>' + poi_info.infoWindow);
                 popup.on('close', () => {
                     if (MashupPlatform.widget.outputs.poiOutput.connected) {
                         MashupPlatform.widget.outputs.poiOutput.pushEvent(null);
@@ -300,57 +336,67 @@
             poi.data = poi_info;
 
             // bind event to send function
-            el.addEventListener("click", sendSelectedPoI.bind(poi));
+            el.addEventListener('click', sendSelectedPoI.bind(poi));
 
             this.pois[poi_info.id] = poi;
 
-        } else if (poi_info.location.type == "LineString") {
-            this.map.addSource(poi_info.id, {
-                'type': 'geojson',
-                'data': {
-                    'type': 'Feature',
-                    'properties': {},
-                    'geometry': {
-                        'type': 'LineString',
-                        'coordinates': poi_info.location.coordinates
-                    }
+        } else {
+            const feature = {};
+            feature.id = poi_info.id;
+            feature.type = 'Feature';
+            feature.geometry = poi_info.location;
+            feature.properties = poi_info;
+
+            if (poi_info.style == null) {
+                poi_info.style = {};
+            }
+
+            switch (poi_info.location.type) {
+            case 'LineString':
+            case 'MultiLineString':
+                if (poi_info.style.stroke == null) {
+                    poi_info.style.stroke = {}
                 }
-            });
-            this.map.addLayer({
-                'id': poi_info.id,
-                'type': 'line',
-                'source': poi_info.id,
-                'layout': {
-                    'line-join': 'round',
-                    'line-cap': 'round'
-                },
-                'paint': {
-                    'line-color': '#888',
-                    'line-width': 8
+                feature.properties.color = poi_info.style.stroke.color || 'blue'
+                feature.properties.width = poi_info.style.stroke.width || 3
+                break;
+            case 'Polygon':
+            case 'MultiPolygon':
+                if (poi_info.style.fill == null) {
+                    poi_info.style.fill = {}
                 }
-            });
-        } else if (poi_info.location.type == 'Polygon') {
-            this.map.addSource(poi_info.id, {
-                'type': 'geojson',
-                'data': {
-                    'type': 'Feature',
-                    'properties': {},
-                    'geometry': {
-                        'type': 'Polygon',
-                        'coordinates': poi_info.location.coordinates
-                    }
+                feature.properties.color = poi_info.style.fill.color || 'rgba(0, 0, 255, 0.1)'
+                feature.properties.outlineColor = poi_info.style.fill.outlineColor || 'rgba(0, 0, 255, 1)'
+                break;
+            case 'MultiPoint':
+                if (poi_info.style.circle == null) {
+                    poi_info.style.circle = {}
                 }
-            });
-            this.map.addLayer({
-                'id': poi_info.id,
-                'type': 'fill',
-                'source': poi_info.id,
-                'layout': {},
-                'paint': {
-                    'fill-color': '#E92D63',
-                    'fill-opacity': 0.4
+                feature.properties.color = poi_info.style.circle.color || '#B42222'
+                feature.properties.radius = poi_info.style.circle.radius || 6
+                break;
+            default:
+                MashupPlatform.widget.log(`Unknown type: ${poi_info.location.type}, id: ${poi_info.id}`, MashupPlatform.log.INFO);
+                return;
+            }
+
+            let poi = this.pois[poi_info.id];
+            if (poi == null) {
+                poi = {};
+            }
+            poi.data = poi_info;
+            this.pois[poi_info.id] = poi;
+
+            this.geoUpdated = true;
+
+            if (update) {
+                const index = this.geojsonSource.features.findIndex(e => e.id == feature.id);
+                if (index != -1) {
+                    this.geojsonSource.features[index] = feature;
+                    return;
                 }
-            });
+            }
+            this.geojsonSource.features.push(feature);
         }
     }
 
@@ -361,6 +407,47 @@
     // =========================================================================
     // PRIVATE MEMBERS
     // =========================================================================
+    const createGeojsonLayer = function createGeojsonLayer() {
+        this.map.addSource('feature-collection', {type: 'geojson', data: this.geojsonSource});
+        // MultiPoint
+        this.map.addLayer({
+            id: `__geojsonMultiPoint`,
+            type: 'circle',
+            source: 'feature-collection',
+            paint: {
+                'circle-color': ['get', 'width'],
+                'circle-radius': ['get', 'radius']
+            },
+            'filter': ['==', '$type', 'Point']
+        });
+        // LineString
+        this.map.addLayer({
+            id: `__geojsonLineString`,
+            type: 'line',
+            source: 'feature-collection',
+            layout: {
+                'line-cap': 'round',
+                'line-join': 'round',
+            },
+            paint: {
+                'line-color': ['get', 'color'],
+                'line-width': ['get', 'width']
+            },
+            'filter': ['==', '$type', 'LineString']
+        });
+        // Polygon
+        this.map.addLayer({
+            id: `__geojsonPolygon`,
+            type: 'fill',
+            source: 'feature-collection',
+            paint: {
+                'fill-color': ['get', 'color'],
+                'fill-outline-color': ['get', 'outlineColor']
+            },
+            'filter': ['==', '$type', 'Polygon']
+        });
+    }
+
     const mapStyles = {
         'OSM': 'map/osm.json',
         'GSI_STD': 'map/gsi/std.json',
@@ -533,6 +620,16 @@
         return el;
     }
 
+    const updateGeojsonSource = function updateGetjsonSource() {
+        if (this.geoUpdated) {
+            const source = this.map.getSource('feature-collection')
+            if (source) {
+                source.setData(this.geojsonSource)
+            }
+        }
+        this.geoUpdated = false;
+    }
+
     const colorTable = {
         transparent: '',
         white: '#ffffff',
@@ -580,15 +677,27 @@
 
     const sendPoIList = function sendPoIList() {
         if (MashupPlatform.widget.outputs.poiListOutput.connected) {
-            let bounds = this.map.getBounds();
+            const bounds = this.map.getBounds();
+            const w = bounds.getWest();
+            const s = bounds.getSouth();
+            const e = bounds.getEast();
+            const n = bounds.getNorth();
+            const polygon = turf.polygon([[[w, n], [e, n], [e, s], [w, s], [w, n]]]);
             let poiList = [];
             for (let key in this.pois) {
                 let poi = this.pois[key];
-                if (!poi.hasOwnProperty('__lnglat')) {
-                    poi.__lnglat = new maplibregl.LngLat(poi.data.location.coordinates[0], poi.data.location.coordinates[1]);
-                }
-                if (bounds.contains(poi.__lnglat)) {
-                    poiList.push(poi.data);
+                if (poi.location != null && poi.location.type == 'Point') {
+                    if (!poi.hasOwnProperty('__lnglat')) {
+                        poi.__lnglat = new maplibregl.LngLat(poi.data.location.coordinates[0], poi.data.location.coordinates[1]);
+                    }
+                    if (bounds.contains(poi.__lnglat)) {
+                        poiList.push(poi.data);
+                    }
+                } else {
+                    const feature = this.geojsonSource.features.find(e => e.id == poi.data.id);
+                    if (turf.booleanIntersects(feature, polygon)) {
+                        poiList.push(poi.data);
+                    }
                 }
             };
             MashupPlatform.widget.outputs.poiListOutput.pushEvent(poiList);
@@ -603,7 +712,7 @@
             }
             this.queue = this.queue.concat(commands);
 
-            if (this.executingCmd == "" && this.queue.length > 0) {
+            if (this.executingCmd == '' && this.queue.length > 0) {
                 let cmd = this.queue.shift();
                 if (!cmd.hasOwnProperty('value')) {
                     cmd.value = {}
@@ -617,7 +726,7 @@
 
     const execEnd = function execEnd() {
         setTimeout(() => {
-            _execCommands.call(this, [], "");
+            _execCommands.call(this, [], '');
         }, 0);
     };
 
@@ -699,15 +808,19 @@
             this.waiting = false;
             this.animating = false;
             this.queue = [];
-            this.executingCmd = "";
+            this.executingCmd = '';
         },
         'wait': function (value) {
             this.waiting = true;
             setTimeout(() => {
                 this.waiting = false;
-                _execCommands.call(this, [], "");
+                _execCommands.call(this, [], '');
             }, value * 1000);
         },
+        'clear': function (value) {
+            this.geojsonSource.features = []
+            this.map.getSource('feature-collection').setData(this.geojsonSource)
+        }
     }
 
     window.MapLibre = MapLibre;

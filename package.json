@@ -13,7 +13,7 @@
     "grunt-wirecloud": "^0.9.6",
     "gruntify-eslint": "^5.0.0",
     "jasmine-core": "^2.99.1",
-    "karma": "^4.0.0",
+    "karma": "^6.3.2",
     "karma-chrome-launcher": "^1.0.1",
     "karma-coverage": "^2.0.1",
     "karma-firefox-launcher": "^1.0.0",
@@ -25,6 +25,10 @@
   },
   "private": true,
   "dependencies": {
-    "three": "^0.116.0"
+    "@turf/turf": "^6.3.0",
+    "three": "^0.116.0",
+    "topojson-client": "^3.1.0",
+    "topojson-server": "^3.0.1",
+    "topojson-simplify": "^3.0.3"
   }
 }
