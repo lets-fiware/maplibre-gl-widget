@@ -1,6 +1,7 @@
 ## MapLibre GL widget v0.x.0
 
-- Fit to bounds of feature by zooming when centering
+- Refactoring
+- Fit to bounds of feature by zooming when centering (#11)
 - Fix build error (#10)
 - Support PoIs with lines or polygons (#9)
 
