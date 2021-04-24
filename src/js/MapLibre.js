@@ -36,47 +36,35 @@
         }
 
         MashupPlatform.prefs.registerCallback(function (new_preferences) {
+            const propValue = {
+                'initialZoom': this.map.setZoom,
+                'initialPitch': this.map.setPitch,
+                'minzoom': this.map.setMinZoom,
+                'maxzoom': this.map.setMaxZoom,
+                'minpitch': this.map.setMinPitch,
+                'maxpitch': this.map.setMaxPitch,
+            }
+
             if (new_preferences.hasOwnProperty('initialCenter')) {
                 this.map.setCenter(MashupPlatform.prefs.get('initialCenter').split(','));
-            }
-            if (new_preferences.hasOwnProperty('initialZoom')) {
-                this.map.setZoom(MashupPlatform.prefs.get('initialZoom'));
-            }
-            if (new_preferences.hasOwnProperty('initialPitch')) {
-                this.map.setPitch(MashupPlatform.prefs.get('initialPitch'));
             }
             if (new_preferences.hasOwnProperty('mapStyle') || new_preferences.hasOwnProperty('customStyle')) {
                 this.map.setStyle(getBaseStyle());
             }
-            if (new_preferences.hasOwnProperty('minzoom')) {
-                this.map.setMinZoom(MashupPlatform.prefs.get('minzoom'));
-            }
-            if (new_preferences.hasOwnProperty('maxzoom')) {
-                this.map.setMaxZoom(MashupPlatform.prefs.get('maxzoom'));
-            }
-            if (new_preferences.hasOwnProperty('minpitch')) {
-                this.map.setMinPitch(MashupPlatform.prefs.get('minpitch'));
-            }
-            if (new_preferences.hasOwnProperty('maxpitch')) {
-                this.map.setMaxPitch(MashupPlatform.prefs.get('maxpitch'));
-            }
-            if (new_preferences.hasOwnProperty('navigationControl')) {
-                updateNavigationControl.call(this)
-            }
-            if (new_preferences.hasOwnProperty('scaleControl')) {
-                updateScaleControl.call(this)
-            }
-            if (new_preferences.hasOwnProperty('geolocateControl')) {
-                updateGeolocateControl.call(this)
-            }
-            if (new_preferences.hasOwnProperty('attributionControl')) {
-                updateAttributionControl.call(this)
-            }
-            if (new_preferences.hasOwnProperty('fullscreenControl')) {
-                updateFullscreenControl.call(this)
-            }
             if (new_preferences.hasOwnProperty('debug')) {
                 this.debug = MashupPlatform.prefs.get('debug');
+            }
+
+            for (let prop in propValue) {
+                if (new_preferences.hasOwnProperty(prop)) {
+                    propValue[prop](MashupPlatform.prefs.get(prop))
+                }
+            }
+
+            for (let prop in propControl) {
+                if (new_preferences.hasOwnProperty(prop)) {
+                    propControl[prop].call(this)
+                }
             }
 
             this.waiting = false;
@@ -84,7 +72,6 @@
             this.queue = [];
             this.executingCmd = '';
         }.bind(this));
-
     };
 
     MapLibre.prototype.init = function init() {
@@ -108,20 +95,10 @@
 
         this.map = new maplibregl.Map(options);
 
-        if (MashupPlatform.prefs.get('navigationControl')) {
-            updateNavigationControl.call(this)
-        }
-
-        if (MashupPlatform.prefs.get('scaleControl')) {
-            updateScaleControl.call(this)
-        }
-
-        if (MashupPlatform.prefs.get('geolocateControl')) {
-            updateGeolocateControl.call(this);
-        }
-
-        if (MashupPlatform.prefs.get('fullscreenControl')) {
-            updateFullscreenControl.call(this);
+        for (let prop in propControl) {
+            if (MashupPlatform.prefs.get(prop)) {
+                propControl[prop].call(this)
+            }
         }
 
         updateAttributionControl.call(this)
@@ -162,11 +139,13 @@
             this.debug && MashupPlatform.widget.log('resize', MashupPlatform.log.INFO);
         });
 
+        /*
         this.map.on('mousemove', (event) => {
         });
 
         this.map.on('mouseleave', (event) => {
         });
+        */
 
         // Porting of https://github.com/Wirecloud/ol3-map-widget
         // Set position button
@@ -251,7 +230,7 @@
     MapLibre.prototype.registerPoIs = function registerPoIs(pois_info) {
         this.geoUpdated = false;
         pois_info.forEach(poi => registerPoI.call(this, poi, true));
-        updateGeojsonSource.call(this);
+        setGeojsonSource.call(this);
         sendPoIList.call(this);
     }
 
@@ -262,9 +241,10 @@
         };
         this.pois = {};
         this.geojsonSource.features = [];
-        this.map.getSource('feature-collection').setData(this.geojsonSource)
+        this.geoUpdated = true
+        setGeojsonSource.call(this)
         pois_info.forEach(poi => registerPoI.call(this, poi, false));
-        updateGeojsonSource.call(this);
+        setGeojsonSource.call(this);
         sendPoIList.call(this);
     }
 
@@ -276,14 +256,14 @@
             let coord = poi.location.coordinates;
             if (poi.location.type != 'Point') {
                 const feature = this.geojsonSource.features.find(e => e.id == poi.id);
-                coord = turf.center(feature).geometry.coordinates;
+                // coord = turf.center(feature).geometry.coordinates;
                 const box = turf.envelope({"type": "FeatureCollection", "features": [feature]}).bbox;
                 const bounds = new maplibregl.LngLatBounds([box[0], box[1]], [box[2], box[3]]);
                 this.map.fitBounds(bounds, { padding: 20 });
             } else {
                 this.map.setCenter(coord);
             }
-            updateGeojsonSource.call(this);
+            setGeojsonSource.call(this);
             sendPoIList.call(this);
         }
     }
@@ -307,7 +287,8 @@
             delete this.pois[poi.id];
         });
         if (updated) {
-            this.map.getSource('feature-collection').setData(this.geojsonSource)
+            this.geoUpdated = true
+            setGeojsonSource.call(this)
         }
     }
 
@@ -543,6 +524,14 @@
         }
     }
 
+    const propControl = {
+        'navigationControl': updateNavigationControl,
+        'scaleControl': updateScaleControl,
+        'geolocateControl': updateGeolocateControl,
+        'attributionControl': updateAttributionControl,
+        'fullscreenControl': updateFullscreenControl,
+    }
+
     const build_marker = function build_marker(icon) {
         const url = (typeof icon === 'string') ? icon : icon.src;
         let el = document.createElement('div');
@@ -624,7 +613,7 @@
         return el;
     }
 
-    const updateGeojsonSource = function updateGetjsonSource() {
+    const setGeojsonSource = function updateGetjsonSource() {
         if (this.geoUpdated) {
             const source = this.map.getSource('feature-collection')
             if (source) {
@@ -821,9 +810,10 @@
                 _execCommands.call(this, [], '');
             }, value * 1000);
         },
-        'clear': function (value) {
+        'clearFeatures': function (value) {
             this.geojsonSource.features = []
-            this.map.getSource('feature-collection').setData(this.geojsonSource)
+            this.geoUpdated = true
+            setGeojsonSource.call(this)
         }
     }
 
