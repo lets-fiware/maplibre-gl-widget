@@ -751,7 +751,7 @@
         'rotatecamera': function (value) {
             if (!this.animating) {
                 this.animating = true
-                let rotateCamera = function rotateCamera(value) {
+                let rotateCamera = (value) => {
                     if (this.animating) {
                         if (typeof value === 'number') {
                             // clamp the rotation between 0 -360 degrees

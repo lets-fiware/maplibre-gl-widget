@@ -1,3 +1,7 @@
+## v0.x.0
+
+- Fix animating
+
 ## v0.4.0
 
 - Refactoring

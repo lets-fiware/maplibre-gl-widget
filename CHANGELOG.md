@@ -1,3 +1,7 @@
+## MapLibre GL widget v0.x.0
+
+- Fix animating
+
 ## MapLibre GL widget v0.4.0 - April 25, 2021
 
 - Refactoring (#12)
