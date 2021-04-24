@@ -1,3 +1,9 @@
+## v0.x.0
+
+- Fit to bounds of feature by zooming when centering
+- Fix build error
+- Support PoIs with lines or polygons
+
 ## v0.3.0
 
 - Improve initial center
