@@ -1,8 +1,10 @@
 {
   "env": {
-    "node": true
+    "browser": true,
+    "es6": true
   },
   "globals": {
+    "MashupPlatform": false,
     "Promise": false,
     "WeakMap": false
   },
