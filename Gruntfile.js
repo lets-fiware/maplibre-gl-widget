@@ -156,7 +156,10 @@ module.exports = function (grunt) {
                 },
                 files: [
                     'node_modules/mock-applicationmashup/dist/MockMP.js',
-                    'src/js/*.js',
+                    'src/js/MapLibre.js',
+                    'tests/helper/Mapbox3DTiles.js',
+                    'tests/helper/maplibregl.js',
+                    'tests/helper/turf.js',
                     'tests/js/*Spec.js'
                 ],
                 exclude: [
@@ -227,17 +230,17 @@ module.exports = function (grunt) {
 
     grunt.registerTask('test', [
         'eslint',
-        // 'karma:widget'
+        'karma:widget'
     ]);
 
     grunt.registerTask('debug', [
         'eslint',
-        // 'karma:widgetdebug'
+        'karma:widgetdebug'
     ]);
 
     grunt.registerTask('ci', [
         'eslint',
-        // 'karma:widgetci',
+        'karma:widgetci',
         'coveralls'
     ]);
 
@@ -252,7 +255,7 @@ module.exports = function (grunt) {
     ]);
 
     grunt.registerTask('default', [
-        'test',
+        // 'test',
         'build'
     ]);
 

@@ -6,7 +6,7 @@
  * Licensed under the 3-Clause BSD License
  */
 
-/* globals $, MashupPlatform, MockMP, maplibre */
+/* globals MashupPlatform, MockMP, maplibregl, Mapbox3DTiles, turf */
 
 (function () {
 
@@ -18,12 +18,32 @@
 
         beforeAll(function () {
             window.MashupPlatform = new MockMP({
-                type: 'widget'
+                type: 'widget',
+                prefs: {
+                    'initialCenter': '',
+                    'initialZoom': '6',
+                    'initialPitch': '0',
+                    'mapStyle': 'OSM',
+                    'customStyle': '',
+                    'minzoom': '4',
+                    'maxzoom': '18',
+                    'minpitch': '0',
+                    'maxpitch': '60',
+                    'navigationControl': 'off',
+                    'geolocateControl': 'off',
+                    'fullscreenControl': 'off',
+                    'scaleControl': 'off',
+                    'attributionControl': false,
+                    'debug': false
+                },
+                inputs: ['layerInfo', 'poiInput', 'poiInputCenter', 'replacePoIs', 'deletePoiInput', 'commnadInput'],
+                outputs: ['poiOutput', 'poiListOutput']
             });
         });
 
         beforeEach(function () {
             MashupPlatform.reset();
+            MashupPlatform.prefs.set.calls.reset();
             widget = new MapLibre();
         });
 
