@@ -6,8 +6,9 @@
  * Licensed under the BSD 3-Clause License
  */
 
-var ConfigParser = require('wirecloud-config-parser');
-var parser = new ConfigParser('src/config.xml');
+const path = require('path');
+const ConfigParser = require('wirecloud-config-parser');
+const parser = new ConfigParser('src/config.xml');
 
 module.exports = function (grunt) {
 
@@ -20,61 +21,44 @@ module.exports = function (grunt) {
 
         eslint: {
             widget: {
+                options: {
+                    configFile: 'src/.eslintrc'
+                },
                 src: 'src/js/**/*.js'
             },
             grunt: {
                 options: {
-                    configFile: '.eslintrc-node'
+                    configFile: '.eslintrc'
                 },
                 src: 'Gruntfile.js',
             },
             test: {
                 options: {
-                    configFile: '.eslintrc-jasmine'
+                    configFile: 'tests/.eslintrc'
                 },
                 src: ['src/test/**/*.js', '!src/test/fixtures/']
-            }
-        },
-
-        'curl-dir': {
-            libs: {
-                src: [
-                    'https://raw.githubusercontent.com/Geodan/mapbox-3dtiles/master/dist/Mapbox3DTiles.js',
-                    'https://raw.githubusercontent.com/Geodan/mapbox-3dtiles/master/LICENSE',
-                    'https://raw.githubusercontent.com/Geodan/mapbox-3dtiles/master/README.md'
-                ],
-                dest: 'build/lib/lib/mapbox-3dtiles/'
-            },
-            maps: {
-                src: [
-                    'https://raw.githubusercontent.com/gsi-cyberjapan/gsivectortile-mapbox-gl-js/master/std.json',
-                    'https://raw.githubusercontent.com/gsi-cyberjapan/gsivectortile-mapbox-gl-js/master/std_vertical.json',
-                    'https://raw.githubusercontent.com/gsi-cyberjapan/gsivectortile-mapbox-gl-js/master/pale.json',
-                    'https://raw.githubusercontent.com/gsi-cyberjapan/gsivectortile-mapbox-gl-js/master/blank.json',
-                    'https://raw.githubusercontent.com/gsi-cyberjapan/gsivectortile-3d-like-building/master/building3d.json',
-                    'https://raw.githubusercontent.com/gsi-cyberjapan/gsivectortile-3d-like-building/master/building3ddark.json',
-                    'https://raw.githubusercontent.com/gsi-cyberjapan/gsivectortile-3d-like-building/master/building3dphoto.json'
-                ],
-                dest: 'build/map/map/gsi'
             }
         },
 
         copy: {
             libs: {
                 files: [
-                    {expand: true, cwd: 'node_modules/maplibre-gl/dist', src: '*', dest: 'build/lib/lib/maplibre-gl/'},
-                    {expand: true, cwd: 'node_modules/maplibre-gl/dist', src: '*/*', dest: 'build/lib/lib/maplibre-gl/'},
-                    {expand: true, cwd: 'node_modules/maplibre-gl', src: 'README.md', dest: 'build/lib/lib/maplibre-gl/'},
-                    {expand: true, cwd: 'node_modules/maplibre-gl', src: 'LICENSE.txt', dest: 'build/lib/lib/maplibre-gl/'},
                     {expand: true, cwd: 'node_modules/three/build', src: 'three.min.js', dest: 'build/lib/lib/js/'},
-                    {expand: true, cwd: 'node_modules/@turf/turf', src: 'turf.min.js', dest: 'build/lib/lib/js/'},
-                    {expand: true, cwd: 'node_modules/three/examples/js/loaders', src: 'GLTFLoader.js', dest: 'build/lib/lib/js/'}
+                    {expand: true, cwd: 'node_modules/three/examples/js/loaders', src: 'GLTFLoader.js', dest: 'build/lib/lib/js/'},
+                    {expand: true, cwd: 'node_modules/mapbox-3dtiles/dist', src: 'Mapbox3DTiles.js', dest: 'build/lib/lib/js/'}
                 ]
-            },
-            main: {
-                files: [
-                    {expand: true, cwd: 'src/js', src: '*', dest: 'build/src/js'}
-                ]
+            }
+        },
+
+        run: {
+            copy: {
+                cmd: './script/install.sh'
+            }
+        },
+
+        coveralls: {
+            library: {
+                src: 'build/coverage/lcov/lcov.info'
             }
         },
 
@@ -143,7 +127,58 @@ module.exports = function (grunt) {
             },
             temp: {
                 src: ['build/src']
+            },
+            buildtemp: {
+                src: ['build/tmp']
+            },
+            libs: {
+                src: ['src/js/node_modules']
             }
+        },
+
+        webpack: {
+            build: {
+                mode: 'production',
+                entry: {
+                    app: ['@babel/polyfill', './src/js/main.js']
+                },
+                devtool: 'source-map',
+                output: {
+                    path: path.resolve(__dirname, 'build/src/js'),
+                    libraryTarget: 'umd',
+                    filename: 'main.js'
+                },
+                module: {
+                    rules: [
+                        {
+                            test: /\.js/,
+                            exclude: /node_modules/,
+                            use: [
+                                'babel-loader'
+                            ]
+                        },
+                        {
+                            test: /\.css$/,
+                            use: [
+                                'style-loader',
+                                {
+                                    loader: 'css-loader',
+                                },
+                            ],
+                        },
+                        {
+                            test: /\.(png|svg|jpg|gif)$/,
+                            use: {
+                                loader: 'url-loader',
+                                options: {
+                                    name: './dist/img/icon/[name].[ext]',
+                                },
+                            },
+                        },
+                    ]
+                },
+            }
+
         },
 
         karma: {
@@ -226,7 +261,9 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-coveralls');
     grunt.loadNpmTasks('grunt-strip-code');
     grunt.loadNpmTasks('grunt-text-replace');
-    grunt.loadNpmTasks('grunt-curl');
+    grunt.loadNpmTasks('grunt-webpack');
+    grunt.loadNpmTasks('grunt-run');
+
 
     grunt.registerTask('test', [
         'eslint',
@@ -245,12 +282,10 @@ module.exports = function (grunt) {
     ]);
 
     grunt.registerTask('build', [
-        'clean:temp',
-        'copy:main',
+        'run:copy',
         'copy:libs',
-        'curl-dir:libs',
-        'curl-dir:maps',
         'strip_code',
+        'webpack:build',
         'compress:widget'
     ]);
 

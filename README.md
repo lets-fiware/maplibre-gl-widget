@@ -55,6 +55,7 @@ The Maplibre GL widget makes use of the following libraries:
 | [maplibre/maplibre-gl-js](https://github.com/maplibre/maplibre-gl-js) | 3-Clause BSD License |
 | [Geodan/mapbox-3dtiles](https://github.com/Geodan/mapbox-3dtiles)     | 3-Clause BSD License |
 | [mrdoob/three.js](https://github.com/mrdoob/three.js/)                | MIT License          |
+| [Turfjs/turf](https://github.com/Turfjs/turf)                         | MIT License          |
 
 The dependencies of dependencies have been omitted from the list.
 
