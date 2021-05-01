@@ -1,8 +1,9 @@
 ## MapLibre GL widget v0.x.0
 
-- Refactoring
-- Support Deck.gl Tile3D Layer
-- Support GSI terrain layer
+- Improve build process
+- Refactoring (#17)
+- Support Deck.gl Tile3D Layer (#17)
+- Support GSI terrain layer (#17)
 - Support webpack (#16)
 - Prepare unit test (#15)
 - Fix animating (#14)

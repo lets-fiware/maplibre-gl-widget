@@ -56,6 +56,14 @@ module.exports = function (grunt) {
                 arg: [
                     'build'
                 ]
+            },
+            'webpack-prod': {
+                cmd: 'webpack',
+                arg: [
+                    'build',
+                    '-c',
+                    'webpack.config.production.js'
+                ]
             }
         },
 
@@ -250,4 +258,13 @@ module.exports = function (grunt) {
         'wirecloud'
     ]);
 
+    grunt.registerTask('production', [
+        'clean:build',
+        'eslint',
+        'run:copy',
+        'copy:libs',
+        // 'strip_code',
+        'run:webpack-prod',
+        'compress:widget'
+    ]);
 };
