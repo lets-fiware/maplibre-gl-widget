@@ -4,9 +4,8 @@ const parser = new ConfigParser('src/config.xml');
 const metadata = parser.getData();
 
 module.exports = {
-  mode: 'development',
+  mode: 'production',
   entry: './src/js/main.js',
-  devtool: 'source-map',
   output: {
       path: path.resolve(__dirname, 'build/js'),
       libraryTarget: 'umd',
@@ -42,16 +41,5 @@ module.exports = {
               },
           },
       ]
-  },
-  devServer: {
-    contentBase: path.join(__dirname, 'build'),
-    publicPath: '/js/',
-    hot: true,
-    open: false,
-    host: '0.0.0.0',
-    port: 8080,
-    watchContentBase: true,
-    inline: true,
-    hot: true
   }
 }
