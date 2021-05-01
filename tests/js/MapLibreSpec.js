@@ -6,7 +6,7 @@
  * Licensed under the 3-Clause BSD License
  */
 
-/* globals MashupPlatform, MockMP, maplibregl, Mapbox3DTiles, turf */
+/* globals MashupPlatform, MockMP */
 
 (function () {
 
@@ -44,7 +44,7 @@
         beforeEach(function () {
             MashupPlatform.reset();
             MashupPlatform.prefs.set.calls.reset();
-            widget = new MapLibre();
+            // widget = new MapLibre();
         });
 
         it("Dummy test", function () {

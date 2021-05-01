@@ -119,6 +119,47 @@
 ]
 ```
 
+## 3D terrain in Japan
+
+```
+[
+  {
+    "type": "add3dterrainlayer"
+  },
+  {
+    "type": "setPitch",
+    "value": 60
+  },
+  {
+    "type": "flyTo",
+    "value": {
+      "center": [
+        138.7185872,
+        35.3606422
+      ],
+      "zoom": 11.5,
+      "speed": 0.7,
+      "essential": true
+    }
+  }
+]
+```
+
+## Tile 3D Layer
+
+```
+[
+  {
+    "type": "addtile3dlayer",
+    "value": {
+      "data": {
+        "url": "https://[url]/tileset.json"
+      }
+    }
+  }
+]
+```
+
 ## PoI style
 
 ### default

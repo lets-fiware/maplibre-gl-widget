@@ -6,7 +6,6 @@
  * Licensed under the BSD 3-Clause License
  */
 
-const path = require('path');
 const ConfigParser = require('wirecloud-config-parser');
 const parser = new ConfigParser('src/config.xml');
 
@@ -36,16 +35,14 @@ module.exports = function (grunt) {
                 options: {
                     configFile: 'tests/.eslintrc'
                 },
-                src: ['src/test/**/*.js', '!src/test/fixtures/']
+                src: ['tests/**/*.js', '!tests/fixtures/']
             }
         },
 
         copy: {
             libs: {
                 files: [
-                    {expand: true, cwd: 'node_modules/three/build', src: 'three.min.js', dest: 'build/lib/lib/js/'},
-                    {expand: true, cwd: 'node_modules/three/examples/js/loaders', src: 'GLTFLoader.js', dest: 'build/lib/lib/js/'},
-                    {expand: true, cwd: 'node_modules/mapbox-3dtiles/dist', src: 'Mapbox3DTiles.js', dest: 'build/lib/lib/js/'}
+                    {expand: true, cwd: 'src/', src: ['*', 'doc/*', 'css/**', 'images/**', 'map/**'], dest: 'build/'}
                 ]
             }
         },
@@ -53,6 +50,12 @@ module.exports = function (grunt) {
         run: {
             copy: {
                 cmd: './script/install.sh'
+            },
+            webpack: {
+                cmd: 'webpack',
+                arg: [
+                    'build'
+                ]
             }
         },
 
@@ -77,14 +80,15 @@ module.exports = function (grunt) {
                 files: [
                     {
                         expand: true,
-                        cwd: 'src',
+                        cwd: 'build',
                         src: [
                             'DESCRIPTION.md',
+                            'DESCRIPTION.ja.md',
+                            'js/**/*',
                             'css/**/*',
                             'doc/**/*',
                             'map/**/*',
                             'images/**/*',
-                            'fonts/**/*',
                             'index.html',
                             'config.xml'
                         ]
@@ -93,7 +97,7 @@ module.exports = function (grunt) {
                         expand: true,
                         cwd: 'build/lib',
                         src: [
-                            'lib/**/*'
+                            '**/*'
                         ]
                     },
                     {
@@ -124,61 +128,7 @@ module.exports = function (grunt) {
         clean: {
             build: {
                 src: ['build']
-            },
-            temp: {
-                src: ['build/src']
-            },
-            buildtemp: {
-                src: ['build/tmp']
-            },
-            libs: {
-                src: ['src/js/node_modules']
             }
-        },
-
-        webpack: {
-            build: {
-                mode: 'production',
-                entry: {
-                    app: ['@babel/polyfill', './src/js/main.js']
-                },
-                devtool: 'source-map',
-                output: {
-                    path: path.resolve(__dirname, 'build/src/js'),
-                    libraryTarget: 'umd',
-                    filename: 'main.js'
-                },
-                module: {
-                    rules: [
-                        {
-                            test: /\.js/,
-                            exclude: /node_modules/,
-                            use: [
-                                'babel-loader'
-                            ]
-                        },
-                        {
-                            test: /\.css$/,
-                            use: [
-                                'style-loader',
-                                {
-                                    loader: 'css-loader',
-                                },
-                            ],
-                        },
-                        {
-                            test: /\.(png|svg|jpg|gif)$/,
-                            use: {
-                                loader: 'url-loader',
-                                options: {
-                                    name: './dist/img/icon/[name].[ext]',
-                                },
-                            },
-                        },
-                    ]
-                },
-            }
-
         },
 
         karma: {
@@ -192,9 +142,9 @@ module.exports = function (grunt) {
                 files: [
                     'node_modules/mock-applicationmashup/dist/MockMP.js',
                     'src/js/MapLibre.js',
-                    'tests/helper/Mapbox3DTiles.js',
-                    'tests/helper/maplibregl.js',
-                    'tests/helper/turf.js',
+                    'tests/helpers/Mapbox3DTiles.js',
+                    'tests/helpers/maplibregl.js',
+                    'tests/helpers/turf.js',
                     'tests/js/*Spec.js'
                 ],
                 exclude: [
@@ -284,12 +234,13 @@ module.exports = function (grunt) {
     grunt.registerTask('build', [
         'run:copy',
         'copy:libs',
-        'strip_code',
-        'webpack:build',
+        // 'strip_code',
+        'run:webpack',
         'compress:widget'
     ]);
 
     grunt.registerTask('default', [
+        'eslint',
         // 'test',
         'build'
     ]);

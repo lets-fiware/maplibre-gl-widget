@@ -50,12 +50,16 @@ available on Read the Docs.
 
 The Maplibre GL widget makes use of the following libraries:
 
-| Libraries                                                             | OSS License          |
-| --------------------------------------------------------------------- | -------------------- |
-| [maplibre/maplibre-gl-js](https://github.com/maplibre/maplibre-gl-js) | 3-Clause BSD License |
-| [Geodan/mapbox-3dtiles](https://github.com/Geodan/mapbox-3dtiles)     | 3-Clause BSD License |
-| [mrdoob/three.js](https://github.com/mrdoob/three.js/)                | MIT License          |
-| [Turfjs/turf](https://github.com/Turfjs/turf)                         | MIT License          |
+| Libraries                                                                                 | OSS License          |
+| ----------------------------------------------------------------------------------------- | -------------------- |
+| [maplibre/maplibre-gl-js](https://github.com/maplibre/maplibre-gl-js)                     | 3-Clause BSD License |
+| [Geodan/mapbox-3dtiles](https://github.com/Geodan/mapbox-3dtiles)                         | 3-Clause BSD License |
+| [mrdoob/three.js](https://github.com/mrdoob/three.js/)                                    | MIT License          |
+| [Turfjs/turf](https://github.com/Turfjs/turf)                                             | MIT License          |
+| [visgl/deck.gl](https://github.com/visgl/deck.gl)                                         | MIT License          |
+| [visgl/loaders.gl](https://github.com/visgl/loaders.gl)                                   | MIT License          |
+| [uber-web/math.gl](https://github.com/uber-web/math.gl)                                   | MIT License          |
+| [Kanahiro/deckgl-gsi-terrain-layer](https://github.com/Kanahiro/deckgl-gsi-terrain-layer) | MIT License          |
 
 The dependencies of dependencies have been omitted from the list.
 
