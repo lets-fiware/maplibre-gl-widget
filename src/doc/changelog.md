@@ -1,5 +1,9 @@
 ## v0.x.0
 
+- Refactoring
+- Support Deck.gl Tile3D Layer
+- Support GSI terrain layer
+- Support webpack
 - Fix animating
 
 ## v0.4.0

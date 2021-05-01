@@ -1,7 +1,10 @@
 ## MapLibre GL widget v0.x.0
 
-- Support webpack
-- Prepare unit test (15)
+- Refactoring
+- Support Deck.gl Tile3D Layer
+- Support GSI terrain layer
+- Support webpack (#16)
+- Prepare unit test (#15)
 - Fix animating (#14)
 
 ## MapLibre GL widget v0.4.0 - April 25, 2021

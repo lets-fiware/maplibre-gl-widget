@@ -1,5 +1,9 @@
 ## v0.x.0
 
+- リファクタリング
+- Deck.gl Tile3D Layer をサポート
+- GSI terrain layer をサポート
+- Webpack をサポート
 - アニメーション動作を修正
 
 ## v0.4.0
