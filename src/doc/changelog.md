@@ -1,4 +1,4 @@
-## v0.x.0
+## v0.5.0
 
 - Refactoring
 - Support Deck.gl Tile3D Layer

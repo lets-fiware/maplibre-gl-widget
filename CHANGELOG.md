@@ -1,6 +1,6 @@
-## MapLibre GL widget v0.x.0
+## MapLibre GL widget v0.5.0 - May 1, 2021
 
-- Improve build process
+- Improve build process (#18)
 - Refactoring (#17)
 - Support Deck.gl Tile3D Layer (#17)
 - Support GSI terrain layer (#17)
