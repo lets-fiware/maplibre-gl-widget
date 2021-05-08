@@ -24,16 +24,16 @@ Install other npm dependencies by running:
 npm install
 ```
 
-In order to build this widget, you need to download grunt:
+In order to build this widget, you can use npm :
 
 ```bash
-sudo npm install -g grunt-cli
+npm run build
 ```
 
-And now, you can use grunt:
+or
 
 ```bash
-grunt
+npm run dev
 ```
 
 If everything goes well, you will find a wgt file in the `dist` folder.
@@ -53,7 +53,7 @@ The Maplibre GL widget makes use of the following libraries:
 | Libraries                                                                                 | OSS License          |
 | ----------------------------------------------------------------------------------------- | -------------------- |
 | [maplibre/maplibre-gl-js](https://github.com/maplibre/maplibre-gl-js)                     | 3-Clause BSD License |
-| [Geodan/mapbox-3dtiles](https://github.com/Geodan/mapbox-3dtiles)                         | 3-Clause BSD License |
+| [lets-fiware/mapbox-3dtiles](https://github.com/lets-fiware/mapbox-3dtiles)               | 3-Clause BSD License |
 | [mrdoob/three.js](https://github.com/mrdoob/three.js/)                                    | MIT License          |
 | [Turfjs/turf](https://github.com/Turfjs/turf)                                             | MIT License          |
 | [visgl/deck.gl](https://github.com/visgl/deck.gl)                                         | MIT License          |

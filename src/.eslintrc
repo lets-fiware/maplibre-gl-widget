@@ -8,6 +8,9 @@
     "Promise": false,
     "WeakMap": false
   },
+  "parserOptions": {
+    "sourceType": "module"
+  },
   "rules": {
     "indent": [
       2,
