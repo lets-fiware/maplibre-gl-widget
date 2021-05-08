@@ -29,7 +29,7 @@ module.exports = function (grunt) {
                 options: {
                     configFile: '.eslintrc'
                 },
-                src: 'Gruntfile.js',
+                src: '*.js',
             },
             test: {
                 options: {
@@ -39,30 +39,19 @@ module.exports = function (grunt) {
             }
         },
 
-        copy: {
-            libs: {
-                files: [
-                    {expand: true, cwd: 'src/', src: ['*', 'doc/*', 'css/**', 'images/**', 'map/**'], dest: 'build/'}
-                ]
-            }
-        },
-
         run: {
-            copy: {
-                cmd: './script/install.sh'
-            },
-            webpack: {
-                cmd: 'webpack',
-                arg: [
-                    'build'
+            'webpack-dev': {
+                cmd: './node_modules/webpack/bin/webpack.js',
+                args: [
+                    '--config',
+                    'webpack.dev.js',
                 ]
             },
             'webpack-prod': {
-                cmd: 'webpack',
-                arg: [
-                    'build',
-                    '-c',
-                    'webpack.config.production.js'
+                cmd: './node_modules/webpack/bin/webpack.js',
+                args: [
+                    '--config',
+                    'webpack.prod.js',
                 ]
             }
         },
@@ -70,12 +59,6 @@ module.exports = function (grunt) {
         coveralls: {
             library: {
                 src: 'build/coverage/lcov/lcov.info'
-            }
-        },
-
-        strip_code: {
-            multiple_files: {
-                src: ['build/src/js/**/*.js']
             }
         },
 
@@ -90,43 +73,7 @@ module.exports = function (grunt) {
                         expand: true,
                         cwd: 'build',
                         src: [
-                            'DESCRIPTION.md',
-                            'DESCRIPTION.ja.md',
-                            'js/**/*',
-                            'css/**/*',
-                            'doc/**/*',
-                            'map/**/*',
-                            'images/**/*',
-                            'index.html',
-                            'config.xml'
-                        ]
-                    },
-                    {
-                        expand: true,
-                        cwd: 'build/lib',
-                        src: [
-                            '**/*'
-                        ]
-                    },
-                    {
-                        expand: true,
-                        cwd: 'build/src',
-                        src: [
-                            'js/**/*'
-                        ]
-                    },
-                    {
-                        expand: true,
-                        cwd: 'build/map',
-                        src: [
-                            'map/**/*'
-                        ]
-                    },
-                    {
-                        expand: true,
-                        cwd: '.',
-                        src: [
-                            'LICENSE'
+                            '**/*',
                         ]
                     }
                 ]
@@ -214,14 +161,9 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-karma');
     grunt.loadNpmTasks('gruntify-eslint');
     grunt.loadNpmTasks('grunt-contrib-compress');
-    grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-coveralls');
-    grunt.loadNpmTasks('grunt-strip-code');
-    grunt.loadNpmTasks('grunt-text-replace');
-    grunt.loadNpmTasks('grunt-webpack');
     grunt.loadNpmTasks('grunt-run');
-
 
     grunt.registerTask('test', [
         'eslint',
@@ -239,31 +181,24 @@ module.exports = function (grunt) {
         'coveralls'
     ]);
 
-    grunt.registerTask('build', [
-        'run:copy',
-        'copy:libs',
-        // 'strip_code',
-        'run:webpack',
+    grunt.registerTask('development', [
+        'clean:build',
+        'eslint',
+        'run:webpack-dev',
         'compress:widget'
     ]);
 
     grunt.registerTask('default', [
-        'eslint',
-        // 'test',
-        'build'
     ]);
 
     grunt.registerTask('publish', [
-        'default',
+        'production',
         'wirecloud'
     ]);
 
     grunt.registerTask('production', [
         'clean:build',
         'eslint',
-        'run:copy',
-        'copy:libs',
-        // 'strip_code',
         'run:webpack-prod',
         'compress:widget'
     ]);

@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [12.x]
+        node-version: [14.x]
 
     steps:
       - name: Checkout code
@@ -33,5 +33,4 @@ jobs:
           firefox-version: latest-esr
 
       - run: npm install
-      - run: npm install grunt-cli -g
-      - run: grunt build
+      - run: npm run build

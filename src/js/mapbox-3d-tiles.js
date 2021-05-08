@@ -6,7 +6,7 @@
  * Licensed under the 3-Clause BSD License
  */
 
-import Mapbox3DTiles from 'mapbox-3dtiles/Mapbox3DTiles';
+import Mapbox3DTiles from '@lets-fiware/mapbox-3dtiles';
 
 const addMapbox3DTiles = function AddMapbox3DTiles(map, value) {
     const tiles = new Mapbox3DTiles.Layer(value.data)

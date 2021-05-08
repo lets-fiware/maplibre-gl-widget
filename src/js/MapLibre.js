@@ -7,8 +7,10 @@
  */
 
 import maplibregl from 'maplibre-gl';
-import 'maplibre-gl/dist/maplibre-gl.css';
 import * as turf from '@turf/turf';
+
+import "../css/styles.css";
+import 'maplibre-gl/dist/maplibre-gl.css';
 
 export default function MapLibre() {
     this.pois = {};
