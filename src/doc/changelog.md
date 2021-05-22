@@ -1,3 +1,7 @@
+## v0.x.0
+
+- Add Raster layer feature
+
 ## v0.5.0
 
 - Refactoring
