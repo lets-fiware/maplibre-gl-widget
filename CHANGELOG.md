@@ -1,3 +1,8 @@
+## MapLibre GL widget v0.x.0
+
+- Add Raster layer feature
+- Improve build process (#20)
+
 ## MapLibre GL widget v0.5.0 - May 1, 2021
 
 - Improve build process (#18)

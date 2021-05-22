@@ -160,6 +160,42 @@
 ]
 ```
 
+## Raster Layer
+
+```
+[
+  {
+    "type": "addlayer",
+    "value": {
+      "source": {
+        "name": "gsi_pale",
+        "data": {
+          "type": "raster",
+          "tiles": ["https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png"],
+          "tileSize": 256
+        }
+      },
+      "data": {
+        "id": "gsi_pale",
+        "type": "raster",
+        "source": "gsi_pale",
+        "minzoom": 0,
+        "maxzoom": 18
+      }
+    }
+  }
+]
+```
+
+```
+[
+  {
+    "type": "addRasterLayer",
+    "value": "GSI_PHOTO"
+  }
+]
+```
+
 ## PoI style
 
 ### default

@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<widget xmlns="http://wirecloud.conwet.fi.upm.es/ns/macdescription/1" vendor="FISUDA" name="maplibregl" version="0.6.0b1">
+<widget xmlns="http://wirecloud.conwet.fi.upm.es/ns/macdescription/1" vendor="FISUDA" name="maplibregl" version="0.6.0b2">
 
     <details>
         <title>__MSG_displayName__</title>
@@ -31,6 +31,9 @@
           <option label="__MSG_gsi_std_vertical__" value="GSI_STD_VERTICAL"/>
           <option label="__MSG_gsi_pale__" value="GSI_PALE"/>
           <option label="__MSG_gsi_blank__" value="GSI_BLANK"/>
+          <option label="__MSG_raster_gsi_photo__" value="RASTER_GSI_PHOTO"/>
+          <option label="__MSG_raster_gsi_english__" value="RASTER_GSI_ENG"/>
+          <option label="__MSG_raster_gsi_relief__" value="RASTER_GSI_RELIEF"/>
           <option label="__MSG_gsi_building3d__" value="GSI_BUILDING3D"/>
           <option label="__MSG_gsi_building3d_dark__" value="GSI_BUILDING3D_DARK"/>
           <option label="__MSG_gsi_building3d_photo__" value="GSI_BUILDING3D_PHOTO"/>
@@ -97,6 +100,9 @@
             <msg name="gsi_std_vertical">GSI Standard Vertical</msg>
             <msg name="gsi_pale">GSI Pale</msg>
             <msg name="gsi_blank">GSI Blank</msg>
+            <msg name="raster_gsi_photo">GSI Photo</msg>
+            <msg name="raster_gsi_english">GSI English</msg>
+            <msg name="raster_gsi_relief">GSI Relief</msg>
             <msg name="gsi_building3d">GSI 3D like building</msg>
             <msg name="gsi_building3d_dark">GSI 3D link building dark</msg>
             <msg name="gsi_building3d_photo">GSI 3D link building photo</msg>
@@ -114,6 +120,9 @@
             <msg name="gsi_std_vertical">地理院 標準地図 (縦書き)</msg>
             <msg name="gsi_pale">地理院 淡色地図</msg>
             <msg name="gsi_blank">地理院 白地図</msg>
+            <msg name="raster_gsi_photo">地理院 写真</msg>
+            <msg name="raster_gsi_english">地理院 英語</msg>
+            <msg name="raster_gsi_relief">地理院 色別標高図</msg>
             <msg name="gsi_building3d">地理院 3D風地図</msg>
             <msg name="gsi_building3d_dark">地理院 3D風地図 ダーク</msg>
             <msg name="gsi_building3d_photo">地理院 3D風地図 写真</msg>

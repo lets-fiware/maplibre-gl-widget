@@ -7,3 +7,4 @@ src/js/.tern-port
 volumes/
 .vscode/
 .devcontainer/
+.swp

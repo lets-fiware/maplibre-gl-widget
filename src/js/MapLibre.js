@@ -8,6 +8,7 @@
 
 import maplibregl from 'maplibre-gl';
 import * as turf from '@turf/turf';
+import { RASTER_MAPS } from './rater_maps';
 
 import "../css/styles.css";
 import 'maplibre-gl/dist/maplibre-gl.css';
@@ -445,6 +446,28 @@ const getBaseStyle = function getBaseStyle() {
 
     if (style == 'CUSTOM_STYLE') {
         style = MashupPlatform.prefs.get('customStyle');
+    } else if (style.startsWith('RASTER_')) {
+        const rmap = RASTER_MAPS[style.substr(7)];
+        style = {
+            version: 8,
+            sources: {
+                base_style: {
+                    type: 'raster',
+                    tiles: [rmap.url],
+                    tileSize: 256,
+                    attribution: rmap.attributions
+                },
+            },
+            layers: [
+                {
+                    id: 'base_style',
+                    type: 'raster',
+                    source: 'base_style',
+                    minzoom: rmap.minZoomLevel,
+                    maxzoom: rmap.maxZoomLevel,
+                },
+            ],
+        }
     } else {
         const url = new URL(mapStyles[style], location.href)
         style = url.href
@@ -758,6 +781,28 @@ const commandList = {
     },
     'setbaselayer': function (value) {
         this.map.setStyle(value.style, value.options);
+        execEnd.call(this);
+    },
+    'addrasterlayer': function (value) {
+        if (typeof value === 'string') {
+            value = {map: value};
+        }
+        const id = value.name || value.map;
+        const source = value.source || id;
+        const rmap = RASTER_MAPS[value.map];
+
+        this.map.addSource(source, {
+            type: 'raster',
+            tiles: [rmap.url],
+            tileSize: 256,
+        });
+        this.map.addLayer({
+            id: id,
+            type: 'raster',
+            source: source,
+            minzoom: rmap.minZoomLevel,
+            maxzoom: rmap.maxZoomLevel,
+        });
         execEnd.call(this);
     },
     'rotatecamera': function (value) {
