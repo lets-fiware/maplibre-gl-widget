@@ -1,5 +1,6 @@
 ## v0.x.0
 
+- Add feature for building marker with Font Awesome icon
 - Add Raster layer feature
 
 ## v0.5.0
