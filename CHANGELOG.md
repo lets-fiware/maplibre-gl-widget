@@ -1,6 +1,7 @@
 ## MapLibre GL widget v0.x.0
 
-- Add Raster layer feature
+- Add feature for building marker with Font Awesome icon
+- Add Raster layer feature (#21)
 - Improve build process (#20)
 
 ## MapLibre GL widget v0.5.0 - May 1, 2021

@@ -14,10 +14,9 @@
       "type": "Point",
       "coordinates": [-3.703,40.417]
     },
-    "style": {
-      "fontSymbol": {
-        "glyph": "fa-star"
-      }
+    "data": {},
+    "icon": {
+      "fontawesome": "fa-star"
     }
   }
 ]
@@ -28,16 +27,19 @@
 ```
 [
   {
-    "id": "place001",
+    "id": "place002",
     "type": "PointOfInterest",
-    "name": "Madrid",
+    "name": "Santander",
     "location": {
       "type": "Point",
-      "coordinates": [-3.703,40.417]
+      "coordinates": [-3.8461563, 43.4613391]
     },
-    "style": {
-      "fontSymbol": {
-        "glyph": "fa-star"
+    "data": {},
+    "icon": {
+      "fontawesome": {
+        "glyph": "fa-utensils",
+        "fill": "red",
+        "form": "box"
       }
     }
   }
@@ -49,16 +51,19 @@
 ```
 [
   {
-    "id": "place001",
+    "id": "place003",
     "type": "PointOfInterest",
-    "name": "Madrid",
+    "name": "Málaga",
     "location": {
       "type": "Point",
-      "coordinates": [-3.703,40.417]
+      "coordinates": [-4.5193062, 36.7182015]
     },
-    "style": {
-      "fontSymbol": {
-        "glyph": "fa-star"
+    "data": {},
+    "icon": {
+      "fontawesome": {
+        "glyph": "fa-bus",
+        "fill": "orange",
+        "form": "circle"
       }
     }
   }

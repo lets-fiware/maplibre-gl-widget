@@ -294,7 +294,9 @@ const registerPoI = function registerPoI(poi_info, update) {
         let poi = this.pois[poi_info.id];
 
         let el = ('icon' in poi_info)
-            ? build_marker(poi_info.icon)
+            ? ('fontawesome' in poi_info.icon)
+                ? build_marker_fontawesome(poi_info.icon.fontawesome)
+                : build_marker(poi_info.icon)
             : build_marker_webfont(poi_info);
 
         if (poi == null) {
@@ -560,6 +562,61 @@ const build_marker = function build_marker(icon) {
     el.style.backgroundSize = '100% auto';
     el.style.width = '30px';
     el.style.height = '30px';
+
+    return el;
+}
+
+const build_marker_fontawesome = function build_marker_fontawesome(fa) {
+    if (typeof fa === 'string') {
+        fa = {glyph: fa};
+    }
+    const size = (fa.size || '30') + 'px';
+    const i = document.createElement('i');
+    i.className = 'se-icon fa ' + ((!fa.glyph || fa.glyph == "") ? 'fa-star' : fa.glyph);
+    i.style.fontSize = fa.fontSize || '';
+
+    const span = document.createElement('span');
+    span.append(i);
+    span.style.display = 'flex';
+    span.style.justifyContent = 'center';
+    span.style.alignItems = 'center';
+    span.style.boxSizing = 'border-box';
+    span.style.cursor = 'pointer';
+
+    span.style.width = size;
+    span.style.height = size;
+    span.style.color = getColorCode(fa.stroke || fa.color, '#fff');
+    span.style.background = getColorCode(fa.fill, '#1f2f54');
+    span.style.border = 'solid ' + (fa.strokeWidth || '2') + 'px';
+    span.style.boxShadow = fa.shadow || '0 0 2px #000';
+
+    switch (fa.form) {
+    case 'none':
+        span.style.border = '';
+        span.style.boxShadow = '';
+        break;
+    case 'icon':
+        i.style.fontSize = size;
+        span.style.color = span.style.background;
+        span.style.background = '';
+        span.style.border = '';
+        span.style.boxShadow = '';
+        break;
+    case 'box':
+        span.style.borderRadius = '';
+        break;
+    case 'circle':
+        span.style.borderRadius = '70% 70% 70% 70%';
+        break;
+    default:
+        i.style.transform = 'rotateZ(135deg)';
+        span.style.borderRadius = '0 70% 70%';
+        span.style.transform = 'rotateZ(-135deg)';
+        break;
+    }
+
+    const el = document.createElement('div');
+    el.append(span);
 
     return el;
 }
