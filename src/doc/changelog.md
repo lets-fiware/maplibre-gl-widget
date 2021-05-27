@@ -1,5 +1,8 @@
 ## v0.x.0
 
+- Add arc layer, scatterplot layer, icon layer, line layer and geojson layer
+  feature
+- Add hexagon layer feature
 - Add feature for building marker with Font Awesome icon
 - Add Raster layer feature
 

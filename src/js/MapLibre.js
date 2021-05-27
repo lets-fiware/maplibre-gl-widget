@@ -789,7 +789,12 @@ const _execCommands = function _execCommands(commands, _executingCmd) {
             }
             if (cmd.type != null) {
                 this.executingCmd = cmd.type.toLowerCase();
-                commandList[this.executingCmd].call(this, cmd.value);
+                if (commandList[this.executingCmd]) {
+                    commandList[this.executingCmd].call(this, cmd.value);
+                } else {
+                    MashupPlatform.widget.log(`${this.executingCmd} not found`, MashupPlatform.log.INFO);
+                    this.executingCmd = '';
+                }
             }
         }
     }
@@ -812,6 +817,36 @@ const commandList = {
     'addhexagonlayer': function (value) {
         import(/* webpackChunkName: "deck-gl-ext" */ './deck-gl-extension').then(module => {
             module.addHexagonLayer(this.map, value);
+            execEnd.call(this);
+        });
+    },
+    'addarclayer': function (value) {
+        import(/* webpackChunkName: "deck-gl-ext" */ './deck-gl-extension').then(module => {
+            module.addArcLayer(this.map, value);
+            execEnd.call(this);
+        });
+    },
+    'addscatterplotlayer': function (value) {
+        import(/* webpackChunkName: "deck-gl-ext" */ './deck-gl-extension').then(module => {
+            module.addScatterplotLayer(this.map, value);
+            execEnd.call(this);
+        });
+    },
+    'addiconlayer': function (value) {
+        import(/* webpackChunkName: "deck-gl-ext" */ './deck-gl-extension').then(module => {
+            module.addIconLayer(this.map, value);
+            execEnd.call(this);
+        });
+    },
+    'addlinelayer': function (value) {
+        import(/* webpackChunkName: "deck-gl-ext" */ './deck-gl-extension').then(module => {
+            module.addLineLayer(this.map, value);
+            execEnd.call(this);
+        });
+    },
+    'addgeojsonlayer': function (value) {
+        import(/* webpackChunkName: "deck-gl-ext" */ './deck-gl-extension').then(module => {
+            module.addGeoJsonLayer(this.map, value);
             execEnd.call(this);
         });
     },

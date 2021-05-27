@@ -8,6 +8,7 @@
 
 import { MapboxLayer } from '@deck.gl/mapbox';
 import { Deck } from '@deck.gl/core';
+import { ArcLayer, GeoJsonLayer, IconLayer, LineLayer, ScatterplotLayer } from '@deck.gl/layers';
 import { Tile3DLayer } from '@deck.gl/geo-layers';
 import { Tiles3DLoader } from '@loaders.gl/3d-tiles';
 import { HexagonLayer } from '@deck.gl/aggregation-layers';
@@ -63,6 +64,41 @@ const addHexagonLayer = function addHexagonLayer(map, value) {
 }
 
 export { addHexagonLayer };
+
+const addArcLayer = function addArcLayer(map, value) {
+    const hexagonLayer = new ArcLayer(value);
+    addDeckglLayer(map, hexagonLayer);
+}
+
+export { addArcLayer };
+
+const addScatterplotLayer = function addScatterplotLayer(map, value) {
+    const hexagonLayer = new ScatterplotLayer(value);
+    addDeckglLayer(map, hexagonLayer);
+}
+
+export { addScatterplotLayer };
+
+const addIconLayer = function addIconLayer(map, value) {
+    const hexagonLayer = new IconLayer(value);
+    addDeckglLayer(map, hexagonLayer);
+}
+
+export { addIconLayer };
+
+const addLineLayer = function addLineLayer(map, value) {
+    const hexagonLayer = new LineLayer(value);
+    addDeckglLayer(map, hexagonLayer);
+}
+
+export { addLineLayer };
+
+const addGeoJsonLayer = function addGeoJsonLayer(map, value) {
+    const hexagonLayer = new GeoJsonLayer(value);
+    addDeckglLayer(map, hexagonLayer);
+}
+
+export { addGeoJsonLayer };
 
 let layers = [];
 let deck = null;
