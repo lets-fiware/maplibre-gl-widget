@@ -804,13 +804,19 @@ const execEnd = function execEnd() {
 
 const commandList = {
     'addtile3dlayer': function (value) {
-        import(/* webpackChunkName: "deck-gl-ext" */ './deck-gl-extention').then(module => {
+        import(/* webpackChunkName: "deck-gl-ext" */ './deck-gl-extension').then(module => {
             module.addTile3Dlayer(this.map, value);
             execEnd.call(this);
         });
     },
+    'addhexagonlayer': function (value) {
+        import(/* webpackChunkName: "deck-gl-ext" */ './deck-gl-extension').then(module => {
+            module.addHexagonLayer(this.map, value);
+            execEnd.call(this);
+        });
+    },
     'add3dterrainlayer': function (value) {
-        import('./deck-gl-extention').then(module => {
+        import('./deck-gl-extension').then(module => {
             module.addGsiTerrainLayer(this.map, value);
             execEnd.call(this);
         });
