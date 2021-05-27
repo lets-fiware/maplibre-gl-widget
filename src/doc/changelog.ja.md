@@ -1,5 +1,8 @@
 ## v0.x.0
 
+- Arc layer, scatterplot layer, icon layer, line layer および geojson layer
+  機能を追加
+- Hexagon layer 機能を追加
 - FontAwesome アイコンでマーカーを作成する機能を追加
 - ラスターレイヤー機能を追加
 
