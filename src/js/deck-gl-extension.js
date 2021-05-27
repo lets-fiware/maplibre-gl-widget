@@ -10,6 +10,7 @@ import { MapboxLayer } from '@deck.gl/mapbox';
 import { Deck } from '@deck.gl/core';
 import { Tile3DLayer } from '@deck.gl/geo-layers';
 import { Tiles3DLoader } from '@loaders.gl/3d-tiles';
+import { HexagonLayer } from '@deck.gl/aggregation-layers';
 import { Vector3 } from 'math.gl';
 
 import { GsiTerrainLayer } from 'deckgl-gsi-terrain-layer';
@@ -30,13 +31,7 @@ const addGsiTerrainLayer = function addGsiTerrainLayer(map, value) {
         elevationData: terrain_image,
         texture: surface_image,
     });
-    const deck = new Deck({
-        gl: map.painter.context.gl,
-        layers: [
-            layer
-        ]
-    });
-    map.addLayer(new MapboxLayer({id: id, deck}));
+    addDeckglLayer(map, layer);
 }
 
 export { addGsiTerrainLayer };
@@ -57,13 +52,34 @@ const addTile3Dlayer = function addTile3Dlayer(map, value) {
             );
         }
     });
-    const deck = new Deck({
-        gl: map.painter.context.gl,
-        layers: [
-            tile3dLayer
-        ]
-    });
-    map.addLayer(new MapboxLayer({id: id, deck}));
+    addDeckglLayer(map, tile3dLayer);
 }
 
 export { addTile3Dlayer };
+
+const addHexagonLayer = function addHexagonLayer(map, value) {
+    const hexagonLayer = new HexagonLayer(value);
+    addDeckglLayer(map, hexagonLayer);
+}
+
+export { addHexagonLayer };
+
+let layers = [];
+let deck = null;
+
+const addDeckglLayer = function addDeckglLayer(map, newLayer) {
+    const id = '__deckgl-layer';
+
+    layers = layers.filter(layer => layer.id != newLayer.id);
+    layers.push(newLayer);
+
+    if (!deck) {
+        deck = new Deck({
+            gl: map.painter.context.gl,
+            layers: layers
+        });
+        map.addLayer(new MapboxLayer({id: id, deck}));
+    } else {
+        deck.setProps({layers: layers});
+    }
+}
