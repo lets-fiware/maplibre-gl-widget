@@ -1,4 +1,4 @@
-## v0.x.0
+## v0.6.0
 
 - Add arc layer, scatterplot layer, icon layer, line layer and geojson layer
   feature
