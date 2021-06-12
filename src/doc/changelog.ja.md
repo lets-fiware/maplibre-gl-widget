@@ -1,4 +1,4 @@
-## v0.x.0
+## v0.6.0
 
 - Arc layer, scatterplot layer, icon layer, line layer および geojson layer
   機能を追加

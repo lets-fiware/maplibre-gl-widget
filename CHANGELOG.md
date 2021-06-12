@@ -1,7 +1,7 @@
-## MapLibre GL widget v0.x.0
+## MapLibre GL widget v0.6.0 - June 13, 2021
 
 - Add arc layer, scatterplot layer, icon layer, line layer and geojson layer
-  feature
+  feature (#24)
 - Add hexagon layer feature (#23)
 - Add feature for building marker with Font Awesome icon (#22)
 - Add Raster layer feature (#21)
