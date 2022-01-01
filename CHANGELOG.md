@@ -1,3 +1,7 @@
+## MapLibre GL widget v0.6.0-next
+
+- Update copyright (#28)
+
 ## MapLibre GL widget v0.6.0 - June 13, 2021
 
 - Add arc layer, scatterplot layer, icon layer, line layer and geojson layer
