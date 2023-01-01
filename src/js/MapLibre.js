@@ -2,7 +2,7 @@
  * MapLibre GL widget
  * https://github.com/lets-fiware/maplibre-gl-widget
  *
- * Copyright (c) 2021-2022 Kazuhito Suda
+ * Copyright (c) 2021-2023 Kazuhito Suda
  * Licensed under the 3-Clause BSD License
  */
 
