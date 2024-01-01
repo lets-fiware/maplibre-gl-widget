@@ -65,5 +65,5 @@ The dependencies of dependencies have been omitted from the list.
 
 ## Copyright and License
 
-Copyright (c) 2021-2023 Kazuhito Suda<br>
+Copyright (c) 2021-2024 Kazuhito Suda<br>
 Licensed under the [3-Clause BSD License](./LICENSE).
